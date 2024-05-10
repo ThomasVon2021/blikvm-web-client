@@ -8,10 +8,11 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { RateLimitedMouse } from '../utils/mouse.js';
+import Config from '@/config.js';
 
-const mjpegUrl = ref('http://110.40.128.155:8008/stream');
+const mjpegUrl = ref(`http://${Config.host_ip}:8008/stream`);
 
-const ws = new WebSocket('ws://110.40.128.155:10001');
+const ws = new WebSocket(`ws://${Config.host_ip}:10001`);
 
 ws.addEventListener('open', () => {
     console.log('WebSocket connection established');

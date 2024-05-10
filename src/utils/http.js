@@ -1,8 +1,9 @@
 // http.js
 import axios from 'axios';
+import Config from '@/config.js';
 
 const http = axios.create({
-    baseURL: 'http://110.40.128.155:10001/api',
+    baseURL: `http://${Config.host_ip}:10001/api`,
     // headers: {
     //     'Content-Type': 'application/json'
     // }
