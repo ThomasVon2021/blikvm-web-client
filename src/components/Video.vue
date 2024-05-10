@@ -8,7 +8,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { RateLimitedMouse } from '../utils/mouse.js';
-import Config from '@/config.ts';
+import Config from '@/config.js';
 
 const mjpegUrl = ref(`http://${Config.host_ip}:8008/stream`);
 
