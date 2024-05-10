@@ -1,6 +1,7 @@
 {
   "name": "blikvm_client",
   "version": "0.0.0",
+  "build": "2024-05-10 15:13:24",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
