@@ -13,6 +13,7 @@
             </v-btn>
             <Mouse />
             <ATX />
+            <LanguageDD />
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
                 <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? 'FullScreen-Exit' : 'FullScreen'
@@ -32,6 +33,7 @@
 <script setup>
 import { ref } from 'vue';
 import ATX from './ATX.vue';
+import LanguageDD from './Language.vue';
 
 const showAppBar = ref(true);
 const isFullScreen = ref(false);
