@@ -2,6 +2,7 @@
     <div id="kvm">
         <img :src="mjpegUrl" @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
             @wheel="handleWheel" @contextmenu="handleContextMenu" />
+        <Keyboard v-if="store.isKeyboardOpen"/>
     </div>
 </template>
 
@@ -9,6 +10,9 @@
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { RateLimitedMouse } from '../utils/mouse.js';
 import Config from '@/config.js';
+import { useAppStore } from '@/stores/stores';
+
+const store = useAppStore();
 
 const mjpegUrl = ref(`http://${Config.host_ip}:8008/stream`);
 

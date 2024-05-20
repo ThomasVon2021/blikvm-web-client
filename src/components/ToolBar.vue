@@ -3,7 +3,7 @@
         <v-toolbar-title id="toolbar-title">BLIKVM</v-toolbar-title>
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
-            <v-btn icon class="toolbar-btn" size="30">
+            <v-btn icon class="toolbar-btn" size="30" @click="store.switchKeyboardStatus">
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
                 <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
             </v-btn>
@@ -32,7 +32,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useAppStore } from '@/stores/stores';
 
+const store = useAppStore();
 const showAppBar = ref(true);
 const isFullScreen = ref(false);
 

@@ -13,6 +13,7 @@
     "axios": "^1.6.8",
     "core-js": "^3.34.0",
     "roboto-fontface": "*",
+    "simple-keyboard": "^3.7.80",
     "vue": "^3.4.0",
     "vue-i18n": "^9.13.1",
     "vue-tabler-icons": "^2.21.0",
