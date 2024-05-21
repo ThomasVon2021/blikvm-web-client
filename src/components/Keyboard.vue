@@ -19,7 +19,7 @@ import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
 import { ref, onMounted,onUnmounted, watch, defineEmits } from 'vue';
 
-const emit = defineEmits(['onChange', 'onKeyPress']);
+const emit = defineEmits(['onChange', 'onKeyPress', 'onKeyReleased']);
 const props = defineProps(['input']);
 let keyboard = null;
 let keyboardControlPad = null;
@@ -35,7 +35,12 @@ const initialKeyboardX = ref(0);
 const initialKeyboardY = ref(0);
 
 const onChange = (input) => {
-    emit("onChange", input);
+    // emit("onChange", input);
+    // console.log("onChange Value", input);
+};
+
+const onKeyReleased = (input) => {
+    emit("onKeyReleased", input);
     // console.log("onChange Value", input);
 };
 
@@ -48,12 +53,13 @@ const onKeyPress = (button) => {
         button === "{shiftright}" ||
         button === "{capslock}"
     )
-        handleShift();
+    handleShift();
 };
 
 const handleShift = () => {
     let currentLayout = keyboard.options.layoutName;
     let shiftToggle = currentLayout === "default" ? "shift" : "default";
+    console.log("layout:",shiftToggle);
     keyboard.setOptions({
         layoutName: shiftToggle
     });
@@ -97,11 +103,12 @@ onMounted(() => {
   let commonKeyboardOptions = {
     onChange: input => onChange(input),
     onKeyPress: button => onKeyPress(button),
+    onKeyReleased: button => onKeyReleased(button),
     theme: "simple-keyboard hg-theme-default hg-layout-default",
     physicalKeyboardHighlight: true,
     syncInstanceInputs: true,
     mergeDisplay: true,
-    debug: true
+    debug: false
   };
   keyboard = new Keyboard(".simple-keyboard-main", {
     ...commonKeyboardOptions,
@@ -209,8 +216,10 @@ onUnmounted(() => {
   }
 });
 
+
 watch(() => props.input, (newValue, oldValue) => {
-    keyboard.setInput(newValue);
+  console.log("input:",newValue);
+  // keyboard.setInput(newValue);
 });
 
 </script>

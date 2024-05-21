@@ -2,17 +2,19 @@
     <div id="kvm">
         <img :src="mjpegUrl" @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
             @wheel="handleWheel" @contextmenu="handleContextMenu" />
-        <Keyboard v-if="store.isKeyboardOpen"/>
+        <Keyboard v-if="store.isKeyboardOpen" :input="inputKey"  @onKeyPress="handleKeyPress" @onKeyReleased="handleKeyReleased" />
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { RateLimitedMouse } from '../utils/mouse.js';
+import { keytoCode } from '../utils/virtualKeyboard.js';
 import Config from '@/config.js';
 import { useAppStore } from '@/stores/stores';
 
 const store = useAppStore();
+let inputKey = ref('');
 
 const mjpegUrl = ref(`http://${Config.host_ip}:8008/stream`);
 
@@ -33,6 +35,26 @@ ws.addEventListener('close', () => {
 ws.addEventListener('error', (error) => {
     console.error('WebSocket error:', error);
 });
+
+const handleKeyPress = (button) => {
+  const keyCode = keytoCode(button);
+  console.log("pressed keyCode:", keyCode);
+  if (!pressedKeys.value.includes(keyCode)) {
+        pressedKeys.value.push(keyCode);
+    }
+};
+
+const handleKeyReleased = (button) => {
+  const keyCode = keytoCode(button);
+  console.log("release keyCode:", keyCode);
+  const index = pressedKeys.value.indexOf(keyCode);
+    if (index > -1) {
+        pressedKeys.value.splice(index, 1);
+    } else {
+        console.error("Key not found in pressedKeys:", keyCode);
+    }
+};
+
 
 
 let rateLimitedMouse = null;
@@ -65,9 +87,10 @@ const handleKeyDown = (event) => {
     event.preventDefault();
     const code = event.code;
     if (!pressedKeys.value.includes(code)) {
+        inputKey.value = code;
         pressedKeys.value.push(code);
     }
-    // console.log("down: code:", code, "pressedKeys:", pressedKeys.value);
+    console.log("down: code:", code, "pressedKeys:", pressedKeys.value);
 };
 
 const handleKeyUp = (event) => {
