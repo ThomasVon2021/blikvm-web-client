@@ -7,10 +7,8 @@
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
                 <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
             </v-btn>
-            <v-btn icon class="toolbar-btn" size="30">
-                <v-icon class="toolbar-icon">mdi-video</v-icon>
-                <v-tooltip activator="parent" location="bottom">Video</v-tooltip>
-            </v-btn>
+            
+            <TabVideo />
             <Mouse />
             <ATX />
             <Language />

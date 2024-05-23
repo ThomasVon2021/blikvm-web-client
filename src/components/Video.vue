@@ -16,7 +16,7 @@ import { useAppStore } from '@/stores/stores';
 const store = useAppStore();
 let inputKey = ref('');
 
-const mjpegUrl = ref(`http://${Config.host_ip}:8008/stream`);
+const mjpegUrl = ref(`http://${Config.host_ip}:10004/stream`);
 
 const ws = new WebSocket(`ws://${Config.host_ip}:10001`);
 
