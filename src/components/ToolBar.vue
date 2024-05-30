@@ -3,11 +3,14 @@
         <v-toolbar-title id="toolbar-title">BLIKVM</v-toolbar-title>
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
+            <TabNotification />
+            
             <v-btn icon class="toolbar-btn" size="30" @click="store.switchKeyboardStatus">
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
                 <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
             </v-btn>
             
+            <TabMSD />
             <TabVideo />
             <Mouse />
             <ATX />

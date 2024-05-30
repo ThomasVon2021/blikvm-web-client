@@ -56,7 +56,8 @@
         "login":"login",
         "username":"user",
         "password":"ps",
-        "login_success": "login success"
+        "login_success": "login success",
+        "availableImage": "Available boot images"
     },
     "menu":{
         "turn_on_fan":"Start fan",

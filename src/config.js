@@ -19,4 +19,5 @@ export default {
     version:version,
     build:build,
     host_ip : env === 'development' ? dev_device_ip : window.location.hostname,
+    host_http_port: 10005
 }
