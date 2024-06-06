@@ -1,7 +1,10 @@
 <template>
     <div id="kvm">
-        <img :src="mjpegUrl" @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
+        <img   v-if="videoMode==='mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
             @wheel="handleWheel" @contextmenu="handleContextMenu" />
+        <video v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
+        @wheel="handleWheel" @contextmenu="handleContextMenu"></video>
+
         <Keyboard v-if="store.isKeyboardOpen" :input="inputKey"  @onKeyPress="handleKeyPress" @onKeyReleased="handleKeyReleased" />
     </div>
 </template>
@@ -12,9 +15,15 @@ import { RateLimitedMouse } from '../utils/mouse.js';
 import { keytoCode } from '../utils/virtualKeyboard.js';
 import Config from '@/config.js';
 import { useAppStore } from '@/stores/stores';
+import Janus from "@/utils/janus.js";
+import adapter from 'webrtc-adapter';
+import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
+const { videoMode } = storeToRefs(store);
 let inputKey = ref('');
+const janus = ref(null);
+const uStreamerPluginHandle = ref(null);
 
 const mjpegUrl = ref(`http://${Config.host_ip}:10004/stream`);
 
@@ -111,6 +120,77 @@ watch(pressedKeys.value, (newVal) => {
     ws.send(JSON.stringify(obj));
 });
 
+watch(videoMode, (newVal) => {
+    console.log("videoMode:",newVal);
+    if(newVal === 'h264'){
+      initVideo();
+    }
+});
+
+const initVideo = () => {
+  const desp = { adapter };
+  Janus.init({
+    debug: true,
+    dependencies: Janus.useDefaultDependencies(desp),
+  });
+
+  janus.value = new Janus({
+    server: `ws://${Config.host_ip}:8188/`,
+    success: attachUStreamerPlugin,
+    error: console.error,
+  });
+};
+
+const attachUStreamerPlugin = () => {
+  console.log('attach ustreamer plugin');
+  janus.value.attach({
+    plugin: "janus.plugin.ustreamer",
+    success: (pluginHandle) => {
+      console.log('attach ustreamer plugin success');
+      uStreamerPluginHandle.value = pluginHandle;
+      uStreamerPluginHandle.value.send({ message: { request: "watch" } });
+    },
+    error: console.error,
+    onmessage: (msg, jsepOffer) => {
+      if (msg.error_code === 503) {
+        console.log('attach ustreamer error code 503');
+        uStreamerPluginHandle.value.send({ message: { request: "watch" } });
+        return;
+      }
+      if (jsepOffer) {
+        console.log('attach ustreamer jsepoffered');
+        uStreamerPluginHandle.value.createAnswer({
+          jsep: jsepOffer,
+          media: { audioSend: false, videoSend: false },
+          success: (jsepAnswer) => {
+            console.log('attach ustreamer jsepanswered');
+            uStreamerPluginHandle.value.send({
+              message: { request: "start" },
+              jsep: jsepAnswer,
+            });
+            onVideoLoaded();
+          },
+          error: console.error,
+        });
+      }
+    },
+    onremotetrack: (mediaStreamTrack, mediaId, isAdded) => {
+      console.log('attach ustreamer remote track received');
+      if (isAdded) {
+        console.log('attach ustreamer rt added');
+        const videoElement = document.getElementById("webrtc-output");
+        const stream = new MediaStream();
+        stream.addTrack(mediaStreamTrack.clone());
+        videoElement.srcObject = stream;
+      }
+    },
+  });
+};
+
+const onVideoLoaded = () => {
+  // 这里写你的视频加载完成后的处理逻辑
+};
+
 onMounted(() => {
     const limitTime = 100;
     rateLimitedMouse = new RateLimitedMouse(limitTime, (mouseEvent) => {
@@ -120,6 +200,7 @@ onMounted(() => {
     });
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    initVideo();
 });
 
 onBeforeUnmount(() => {

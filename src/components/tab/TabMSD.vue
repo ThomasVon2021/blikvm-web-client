@@ -9,9 +9,21 @@
 
     <UiParentCard title="Mass Storage Devices">
 
-      <v-progress-linear :model-value="uploadProgress" buffer-value="100" :active="uploading" height="6" color="primary"
-        rounded></v-progress-linear>
+      <div class="d-flex align-center">
+        <v-label class="font-weight-medium align-center">status: </v-label>
+        <v-chip :color="imageCreateStateColor" class="ma-2">{{ imageCreateStateText }}</v-chip>
+        <v-chip :color="imageConnectStateColor" class="ma-2">{{ imageConnectStateText }}</v-chip>
+      </div>
 
+
+      <div v-if="uploadState === UploadMSDImageState.UPloadToNetworkBuff">
+        <v-progress-linear :indeterminate="uploading" buffer-value="100" :active="uploading" height="6" color="primary"
+          rounded></v-progress-linear>
+      </div>
+      <div v-if="uploadState === UploadMSDImageState.UPloadToKVM">
+        <v-progress-linear :model-value="uploadProgress" buffer-value="100" :active="uploading" height="6"
+          color="primary" rounded></v-progress-linear>
+      </div>
 
 
       <v-toolbar flat>
@@ -71,13 +83,14 @@
 
       </v-toolbar>
 
+
+
       <v-file-input v-model="files" :show-size="1024" label="choose image file(s)" chips prepend-icon=""
         prepend-inner-icon="mdi-folder-search" color="primary" variant="outlined" @clear="files = null">
       </v-file-input>
 
       <v-data-table v-model="selected" height="215px" :loading="loading" :headers="headers" :items="items.files"
-        item-value="name" fixed-header :multi-sort="true" :no-data-text="$t('$vuetify.dataIterator.noDataText')"
-        return-object>
+        item-value="name" fixed-header :multi-sort="true" no-data-text="No data available" return-object>
 
         <template v-slot:item="{ item }">
           <tr>
@@ -104,13 +117,59 @@
         </template>
       </v-data-table>
 
+      <div class="d-flex ga-4 align-center flex-row">
+        <v-label class="text-subtitlte-1">Make MSD Size</v-label>
+        <v-slider class="flex-grow-1 mx-3" v-model="actualMSDImageSize" min="1" :max="maxMSDImageSize" color="primary"
+          step="1" hide-details>
+          <template v-slot:append>
+            <v-text-field variant="plain" v-model="actualMSDImageSize"></v-text-field>
+          </template>
+        </v-slider>
+      </div>
 
+      <v-progress-linear :indeterminate="makeMSDImageProgress === 0 && makeMSDImageFlag"
+        :model-value="makeMSDImageProgress > 0 ? makeMSDImageProgress : null" buffer-value="100"
+        :active="makeMSDImageFlag" height="6" color="primary" rounded></v-progress-linear>
+
+      <v-spacer></v-spacer>
 
       <div class="grid-container">
         <v-btn key="primary" color="primary" @click=makeMSDDrive()>make usb drive</v-btn>
-        <v-btn key="primary" color="primary">delete usb drive</v-btn>
-        <v-btn key="primary" color="primary">connect to host</v-btn>
-        <v-btn key="primary" color="primary">abort</v-btn>
+        <v-dialog v-model="availableImage">
+          <v-card>
+            <v-card-text>
+              {{ imageMakeResultText }}
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="availableImage = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-btn key="primary" color="primary" @click=deleteMSDImage()>delete usb drive</v-btn>
+        <v-dialog v-model="imageRemoveDialog">
+          <v-card>
+            <v-card-text>
+              {{ imageRemoveResultText }}
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="imageRemoveDialog = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-btn key="primary" color="primary" @click="connectMSDImage('true')">connect to host</v-btn>      
+        <v-btn key="primary" color="primary" @click="connectMSDImage('false')" >abort</v-btn>
+        <v-dialog v-model="imageConnectDialog">
+          <v-card>
+            <v-card-text>
+              {{ imageConnectResultText }}
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="imageConnectDialog = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>  
       </div>
 
     </UiParentCard>
@@ -135,8 +194,9 @@ const dialogRemove = ref(false);
 const selectedItem = ref(null);
 const { createAndAddNotification } = useNotification();
 const uploadProgress = ref(0);
+const uploadPreProgress = ref(0);
 const selected = ref([]);
-const availableItem = ref(false);
+const availableImage = ref(false);
 const sliders = ref([]);
 const headers = ref([
   {
@@ -150,21 +210,97 @@ const headers = ref([
   { title: 'Available', align: 'start', sortable: false },
   { title: 'Remove', align: 'start', sortable: false }
 ])
+const UploadMSDImageState = {
+  None: 0,
+  UPloadToNetworkBuff: 1,
+  UPloadToKVM: 2
+};
+const MsdImageCreateState = {
+  None: 'none',
+  NotCreated: 'not_created',
+  Created: 'created'
+};
+const MsdImageConnectState = {
+  None: 'none',
+  NotConnect: 'not_connected',
+  Connected: 'connected'
+};
 
-const makeMSDDrive = () => {
-  console.log("switches:", switches);
+//make
+const uploadState = ref(UploadMSDImageState.None);
+const maxMSDImageSize = ref(5);
+const actualMSDImageSize = ref(5);
+const makeMSDImageFlag = ref(false);
+const makeMSDImageProgress = ref(0);
+const imageMakeResultText = ref('');
+
+//state
+const imageCreateStateColor = ref('error');
+const imageConnectStateColor = ref('error');
+const imageCreateStateText = ref('none');
+const imageConnectStateText = ref('none');
+//remove
+const imageRemoveDialog = ref(false);
+const imageRemoveResultText = ref('');
+//connect
+const imageConnectDialog = ref(false);
+const imageConnectResultText = ref('');
+
+const makeMSDDrive = async () => {
+  let progressInterval;
   const selectedItems = [];
-  for (const itemName in switches) {
-    if (switches[itemName] === 'yes') {
+  for (const itemName in switches.value) {
+    if (switches.value[itemName] === 'yes') {
       selectedItems.push(itemName);
     }
   }
   if (selectedItems.length > 0) {
-    
+    try {
+      const requestBody = {
+        type: "ventoy",
+        images: selectedItems,
+        name: "ventoy",
+        size: actualMSDImageSize.value
+      };
+
+      progressInterval = setInterval(async () => {
+        try {
+          const progressResponse = await http.post('/msd/create/progress');
+          if (progressResponse.status === 200) {
+            const progressData = progressResponse.data;
+            makeMSDImageProgress.value = progressData.data;
+            console.log('progressResponse.data:', progressResponse.data, ' make image progress:', makeMSDImageProgress.value);
+          } else {
+            console.error('Failed to fetch make image progress:', progressResponse);
+          }
+        } catch (error) {
+          console.error('Error fetching make image progress:', error);
+        }
+      }, 1000); // 每隔1秒请求一次进度
+      makeMSDImageFlag.value = true;
+      const response = await http.post('/msd/create', requestBody);
+
+      if (response.status === 200) {
+        console.log('MSD created successfully:', response.data);
+      } else {
+        console.error('Failed to create MSD:', response);
+      }
+      makeMSDImageProgress.value = 0;
+      makeMSDImageFlag.value = false;
+      clearInterval(progressInterval);
+      availableImage.value = true;
+      imageMakeResultText.value = response.data.msg;
+      getMSDState();
+    } catch (error) {
+      makeMSDImageProgress.value = 0;
+      makeMSDImageFlag.value = false;
+      clearInterval(progressInterval);
+      console.error('Error creating MSD:', error);
+    }
   } else {
     console.log("No image selected");
-    availableItem.value = true;
-    alert('No image selected');
+    availableImage.value = true;
+    imageMakeResultText.value = 'No image selected';
     return;
   }
 };
@@ -195,6 +331,42 @@ const openRemoveDialog = (item) => {
 const handleSwitch = (item) => {
   console.log(item);
 }
+
+const switchImageCreateState = (state) => {
+  console.log('state:', state);
+  switch (state) {
+    case MsdImageCreateState.NotCreated:
+      imageCreateStateColor.value = 'primary';
+      imageCreateStateText.value = 'Not created'
+      return;
+    case MsdImageCreateState.Created:
+      imageCreateStateColor.value = 'success';
+      imageCreateStateText.value = 'Created'
+      return;
+    default:
+      imageCreateStateColor.value = 'error';
+      imageCreateStateText.value = 'None'
+      return;
+  }
+};
+
+const switchImageConnectState = (state) => {
+  console.log('state:', state);
+  switch (state) {
+    case MsdImageConnectState.NotConnect:
+      imageConnectStateColor.value = 'primary';
+      imageConnectStateText.value = 'Disconnected'
+      return;
+    case MsdImageConnectState.Connected:
+      imageConnectStateColor.value = 'success';
+      imageConnectStateText.value = 'Connected'
+      return;
+    default:
+      imageConnectStateColor.value = 'error';
+      imageConnectStateText.value = 'None'
+      return;
+  }
+};
 
 const removeItemConfirm = async (item) => {
 
@@ -244,26 +416,42 @@ const closeRemove = () => {
 }
 
 const handleUploadImageClick = async () => {
+
+  let progressInterval;
   try {
 
     if (files.value) {
       const formData = new FormData();
-
-
       formData.append('image', files.value);
-
-
       uploading.value = true;
+
+      progressInterval = setInterval(async () => {
+        try {
+          const progressResponse = await http.post('/msd/upload/progress');
+          if (progressResponse.status === 200) {
+            const progressData = progressResponse.data;
+            uploadProgress.value = progressData.data;
+            uploadState.value = UploadMSDImageState.UPloadToKVM;
+            console.log('progressResponse.data:', progressResponse.data, ' Upload progress:', uploadProgress.value);
+          } else {
+            console.error('Failed to fetch upload progress:', progressResponse);
+          }
+        } catch (error) {
+          console.error('Error fetching upload progress:', error);
+        }
+      }, 1000); // 每隔1秒请求一次进度
 
       const response = await http.post('/msd/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         onUploadProgress: (progressEvent) => {
-          uploadProgress.value = Math.round(
+          uploadPreProgress.value = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
           );
+          uploadState.value = UploadMSDImageState.UPloadToNetworkBuff;
         },
+        timeout: 30 * 60 * 1000, // 30 minutes
       });
 
       if (response.status === 200) {
@@ -283,6 +471,9 @@ const handleUploadImageClick = async () => {
   } finally {
     uploading.value = false;
     uploadProgress.value = 0;
+    clearInterval(progressInterval);
+    handleRefreshMSDListClick();
+    uploadState.value = UploadMSDImageState.None;
   }
 }
 
@@ -292,7 +483,8 @@ const getMSDList = async () => {
     const response = await http.post(`/msd/images`);
     console.log("/msd/images:", response.data);
     items.value = response.data.data;
-    console.log("items:", items.value)
+    maxMSDImageSize.value = Math.floor(convertBytesToGB(items.value.size - items.value.used));
+    console.log("items:", items.value, "maxMSDImageSize:", maxMSDImageSize.value)
     // Function to initialize switches array based on the number of rows
     const initializeSwitches = (rowCount) => {
       return Array(rowCount).fill(false); // Assuming the default value is false
@@ -317,7 +509,7 @@ const handleRefreshMSDListClick = async () => {
   loading.value = true;
   try {
     await getMSDList();
-
+    getMSDState();
     // Perform other actions upon success
   } catch (error) {
     // Handle errors
@@ -327,11 +519,45 @@ const handleRefreshMSDListClick = async () => {
   }
 };
 
+const getMSDState = async () => {
+  try {
+    const response = await http.post('/msd/state');
+    switchImageCreateState(response.data.data.msd_img_created);
+    switchImageConnectState(response.data.data.msd_status);
+
+  } catch (error) {
+    console.error('getMSDState:', error);
+  }
+};
+
+const deleteMSDImage = async () => {
+  try {
+    const response = await http.post('/msd/remove');
+    imageRemoveDialog.value = true;
+    imageRemoveResultText.value = response.data.msg;
+    getMSDState();
+  } catch (error) {
+    console.error('deleteMSDImage:', error);
+  }
+};
+
+const connectMSDImage = async (action) => {
+  try {
+    const response = await http.post(`/msd/connect?action=${action}`);
+    imageConnectDialog.value = true;
+    imageConnectResultText.value = response.data.msg;
+    getMSDState();
+  } catch (error) {
+    console.error('connect:', error);
+  }
+};
+
 onMounted(() => {
   // Initialize sliders array
   sliders.value = items.value.map(() => ref(5));
 
   getMSDList();
+  getMSDState();
 });
 
 

@@ -39,7 +39,6 @@ const triggerPowerButton = async (button) => {
     return response.data;
   } catch (error) {
     console.error('Error during atx button trigger:', error);
-    throw error;
   }
 };
 
