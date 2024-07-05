@@ -8,14 +8,14 @@
         </template>
 
         <v-card min-width="300">
-
+            <v-lable>Develop later</v-lable> 
             <v-list>
                 <v-list-item>
                     <v-switch v-model="model" color="purple" label="Absolute mode" hide-details></v-switch>
                 </v-list-item>
 
                 <v-list-item>
-                    <v-switch v-model="tablet" color="purple" label="Enable tablet" hide-details></v-switch>
+                    <v-switch v-model="tablet" color="purple" label="relative mode" hide-details></v-switch>
                 </v-list-item>
             </v-list>
 
@@ -45,7 +45,7 @@ function cancel() {
 }
 
 function save() {
-    alert(`Absolute mode: ${model.value}, Enable tablet: ${tablet.value}`);
+    alert(`Absolute mode: ${model.value}, relative mode: ${tablet.value}`);
     menu.value = false;
 }
 

@@ -9,7 +9,7 @@
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
                 <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
             </v-btn>
-            
+            <TabSwitch />
             <TabMSD />
             <TabVideo />
             <Mouse />

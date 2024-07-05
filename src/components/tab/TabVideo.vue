@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+  <v-menu v-model="menu" :close-on-content-click="false" location="bottom" @open="fetchVideoConfig">
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-video</v-icon>
@@ -55,9 +55,22 @@
       </div>
 
       <div class="d-flex ga-4 align-center flex-column flex-wrap flex-xl-nowrap flex-sm-row fill-height">
-        <v-btn key="primary" color="primary">
+        
+        <v-label class="text-subtitlte-1">Reset takes effect</v-label>
+        <v-btn key="primary" color="primary" @click="resetStream">
           reset stream
         </v-btn>
+
+        <v-dialog v-model="resetDialog">
+          <v-card>
+            <v-card-text>
+              {{ resetResultText }}
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="resetDialog = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
 
     </UiParentCard>
@@ -66,14 +79,11 @@
 </template>
 
 <script setup>
-import { ref, shallowRef } from 'vue';
-
-import BaseBreadcrumb from '@/components/shared/BaseBreadcrumb.vue';
+import { ref } from 'vue';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
-import UiChildCard from '@/components/shared/UiChildCard.vue';
-import { AppsIcon, CircleDotIcon, DragDropIcon, FolderIcon, ChevronUpIcon, ChevronDownIcon } from 'vue-tabler-icons';
 import { useAppStore } from '@/stores/stores';
 import { storeToRefs } from 'pinia';
+import http from '@/utils/http.js';
 
 const store = useAppStore();
 const menu = ref(false);
@@ -82,6 +92,56 @@ const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);
 const slider_h264_gop = ref(30);
+const mjpeg_port = ref(8008);
+// 
+const resetDialog = ref(false);
+const resetResultText = ref('');
+
+async function fetchVideoConfig() {
+  try {
+    const response = await http.post('/video/config?action=get')
+    const data = response.data.data;
+    slider_fps.value = data.fps;
+    slider_mjpeg_quality.value = data.quality;
+    slider_h264_mbps.value = data.kbps / 1000; // Convert to Mbps
+    slider_h264_gop.value = data.gop;
+    mjpeg_port.value = data.port
+}
+  catch (error) {
+    console.log(error);
+  }
+}
+
+async function resetStream() {
+  try {
+    const response = await http.post('/video/config?action=set', {
+      data: {
+        port: mjpeg_port.value,
+        fps: slider_fps.value,
+        quality: slider_mjpeg_quality.value,
+        kbps: slider_h264_mbps.value * 1000, // Convert to kbps
+        gop: slider_h264_gop.value
+      }
+    });
+    console.log('Stream reset successful:', response.data);
+    const stopResponse = await http.post('/video?action=stop');
+    if(stopResponse.data.data.state === "STOPPED"){
+      const startResponse = await http.post('/video?action=start');
+      if(startResponse.data.data.state === "RUNNING"){
+        resetResultText.value = "reset video success";
+        resetDialog.value = true;
+      }else{
+        resetResultText.value = startResponse.data.msg;
+        resetDialog.value = true;
+      }
+    }else{
+      resetResultText.value = stopResponse.data.msg;
+      resetDialog.value = true;
+    }
+  } catch (error) {
+    console.error('Error resetting stream:', error);
+  }
+}
 
 function cancel() {
   menu.value = false;
@@ -91,6 +151,10 @@ function save() {
   alert(`Absolute mode: ${model.value}, Enable tablet: ${tablet.value}`);
   menu.value = false;
 }
+
+onMounted(() => {
+  fetchVideoConfig();
+});
 
 </script>
 

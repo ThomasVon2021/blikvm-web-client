@@ -83,8 +83,6 @@
 
       </v-toolbar>
 
-
-
       <v-file-input v-model="files" :show-size="1024" label="choose image file(s)" chips prepend-icon=""
         prepend-inner-icon="mdi-folder-search" color="primary" variant="outlined" @clear="files = null">
       </v-file-input>
@@ -134,7 +132,7 @@
       <v-spacer></v-spacer>
 
       <div class="grid-container">
-        <v-btn key="primary" color="primary" @click=makeMSDDrive()>make usb drive</v-btn>
+        <v-btn key="primary" color="primary" @click=makeMSDDrive() :disabled="imageCreateState === MsdImageCreateState.Created || makeMSDImageFlag">make usb drive</v-btn>
         <v-dialog v-model="availableImage">
           <v-card>
             <v-card-text>
@@ -146,7 +144,7 @@
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click=deleteMSDImage()>delete usb drive</v-btn>
+        <v-btn key="primary" color="primary" @click=deleteMSDImage() >delete usb drive</v-btn>
         <v-dialog v-model="imageRemoveDialog">
           <v-card>
             <v-card-text>
@@ -158,8 +156,8 @@
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click="connectMSDImage('true')">connect to host</v-btn>      
-        <v-btn key="primary" color="primary" @click="connectMSDImage('false')" >abort</v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('true')">connect to host</v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('false')">abort</v-btn>
         <v-dialog v-model="imageConnectDialog">
           <v-card>
             <v-card-text>
@@ -169,7 +167,7 @@
               <v-btn color="primary" block @click="imageConnectDialog = false">Close</v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>  
+        </v-dialog>
       </div>
 
     </UiParentCard>
@@ -239,6 +237,10 @@ const imageCreateStateColor = ref('error');
 const imageConnectStateColor = ref('error');
 const imageCreateStateText = ref('none');
 const imageConnectStateText = ref('none');
+const imageCreateState = ref(MsdImageCreateState.None);
+const imageConnectState = ref(MsdImageConnectState.None);
+
+
 //remove
 const imageRemoveDialog = ref(false);
 const imageRemoveResultText = ref('');
@@ -333,17 +335,20 @@ const handleSwitch = (item) => {
 }
 
 const switchImageCreateState = (state) => {
-  console.log('state:', state);
+  console.log('create state:', state);
   switch (state) {
     case MsdImageCreateState.NotCreated:
+      imageCreateState.value = MsdImageCreateState.NotCreated;
       imageCreateStateColor.value = 'primary';
       imageCreateStateText.value = 'Not created'
       return;
     case MsdImageCreateState.Created:
+      imageCreateState.value = MsdImageCreateState.Created;
       imageCreateStateColor.value = 'success';
       imageCreateStateText.value = 'Created'
       return;
     default:
+      imageCreateState.value = MsdImageCreateState.Created;
       imageCreateStateColor.value = 'error';
       imageCreateStateText.value = 'None'
       return;
@@ -351,17 +356,20 @@ const switchImageCreateState = (state) => {
 };
 
 const switchImageConnectState = (state) => {
-  console.log('state:', state);
+  console.log('connect state:', state);
   switch (state) {
     case MsdImageConnectState.NotConnect:
+      imageConnectState.value = MsdImageConnectState.NotConnect;
       imageConnectStateColor.value = 'primary';
       imageConnectStateText.value = 'Disconnected'
       return;
     case MsdImageConnectState.Connected:
+      imageConnectState.value = MsdImageConnectState.Connected;
       imageConnectStateColor.value = 'success';
       imageConnectStateText.value = 'Connected'
       return;
     default:
+      imageConnectState.value = MsdImageConnectState.Connected;
       imageConnectStateColor.value = 'error';
       imageConnectStateText.value = 'None'
       return;
