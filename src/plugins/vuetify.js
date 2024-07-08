@@ -16,4 +16,7 @@ export default createVuetify({
   theme: {
     defaultTheme: 'light',
   },
+  icons: {
+    iconfont: 'mdi', 
+  },
 })
