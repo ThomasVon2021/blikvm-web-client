@@ -13,17 +13,21 @@
             <TabMSD />
             <TabVideo />
             <Mouse />
-            <ATX />
-            <Language />
+            <TabATX />
+            <TabLanguage />
+            <TabUser/>
+            
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
                 <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? 'FullScreen-Exit' : 'FullScreen'
                     }}</v-tooltip>
             </v-btn>
+            
             <v-btn icon @click="hideAppBar()" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">mdi-chevron-up</v-icon>
                 <v-tooltip activator="parent" location="bottom">Hide</v-tooltip>
             </v-btn>
+            
         </div>
     </v-app-bar>
     <v-icon id="drop-down-btn" v-if="!showAppBar" @click="expandAppBar()" color="primary">

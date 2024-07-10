@@ -11,10 +11,14 @@ const http = axios.create({
 
 // 设置基础认证（Basic Auth）
 http.interceptors.request.use(config => {
-    config.auth = {
-        username: 'admin',
-        password: 'admin'
-    };
+    const token = localStorage.getItem('token'); 
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    const username = localStorage.getItem('username');
+    if (username) {
+        config.headers.Username = username;
+    }
     return config;
 }, error => {
     return Promise.reject(error);

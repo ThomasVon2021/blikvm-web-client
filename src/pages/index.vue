@@ -1,7 +1,157 @@
 <template>
-  <Video />
-</template>
+    <div class="login">
+        <div class="blue-background text-center">
+            <div class="content">
+                <h2>BliKVM Matrix</h2>
+                <h5>Powered by BliCube 2019-present</h5>
+                <h5>All rights reserved worldwide</h5>
+            </div>
+            <v-dialog v-model="openWindowLogin" width="auto" persistent>
+                <div class="py-4">
+                    <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
+                        <div class="text-subtitle-1 text-medium-emphasis">{{ $t('username') }}</div>
 
+                        <v-text-field v-model="user" density="compact" :placeholder="$t('username')"
+                            prepend-inner-icon="mdi-email-outline" variant="outlined" @keyup.enter="handleLoginClick"></v-text-field>
+
+                        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                            {{ $t('password') }}
+                        </div>
+
+                        <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                            :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('enterPassword')"
+                            prepend-inner-icon="mdi-lock-outline" variant="outlined"
+                            @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"></v-text-field>
+
+                        <div class="text-subtitle-1 text-medium-emphasis">{{ $t('oneTimePassword') }}</div>
+
+                        <v-otp-input v-model="otp" type="password" :disabled="validating" true-value="yes"
+                            false-value="no" @keyup.enter="handleLoginClick"></v-otp-input>
+
+                        <v-card class="mb-12" color="surface-variant" variant="tonal">
+                            <v-card-text class="text-medium-emphasis text-caption">
+                                {{ $t('warning') }}:<div class="warning">{{ errorMessage }}</div>
+                                {{ $t('accountLockMessage', { forgotLoginPassword: $t('forgotLoginPassword') }) }}
+                            </v-card-text>
+                        </v-card>
+
+                        <v-btn :loading="validating" block class="mb-8" color="blue" size="large" variant="tonal"
+                            @click="handleLoginClick">
+                            {{ $t('login') }}
+                        </v-btn>
+                    </v-card>
+                </div>
+            </v-dialog>
+        </div>
+    </div>
+</template>
+  
 <script setup>
-  //
+import { ref, shallowRef, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import http from '../utils/http.js'; 
+import { useAppStore } from '@/stores/stores';
+
+const router = useRouter();
+const openWindowLogin = ref(true);
+const visible = ref(false);
+const otp = shallowRef('');
+const validating = shallowRef(false);
+const errorMessage = ref('');
+const user = ref(null);
+const password = ref(null);
+
+const store = useAppStore();
+
+const handleLoginClick = async () => {
+    // TODO v-btn :loading
+    validating.value = true;
+
+    try {
+
+        const requestBody = {
+            username: user.value,
+            password: password.value
+        };
+        console.log('requestBody:', requestBody);
+        const response = await http.post('/login', requestBody);
+        if (response.data.code === 0) {
+
+            // Redirect to the main page
+            console.log('Redirecting to the main page...');
+            router.push('/main');
+            const token = response.data.data.token;
+            store.username = response.data.data.username;
+            localStorage.setItem('token', token);
+            localStorage.setItem('username', store.username);
+            // Update the value of openWindowLogin
+            openWindowLogin.value = false;
+        } else {
+            // Handle failed authentication
+            console.log('Login failed. Please check your credentials:',response.data);
+            // Optionally, set an error message for the user
+            errorMessage.value = 'Login failed. Please check your credentials.';
+        }
+    } catch (error) {
+        // Handle any errors that occurred during authentication
+        console.error('An error occurred during authentication:', error);
+        errorMessage.value = 'An error occurred during authentication. Please try again.';
+        validating.value = false; // Reset the loading state
+    } finally {
+        validating.value = false;
+    }
+};
+
+// Lifecycle hook: onMounted
+onMounted(() => {
+    console.log('LoginPage mounted');
+});
 </script>
+  
+<style scoped>
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.content {
+    text-align: left;
+    color: white;
+    margin-left: 80px;
+    /* Adjust the margin-left value as desired */
+}
+
+.blue-background {
+    flex: 1;
+    background-color: rgb(0, 162, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.text-medium-emphasis {
+    color: #333;
+    /* Adjust the color as needed for better visibility */
+}
+
+.warning {
+    color: red;
+}
+</style>

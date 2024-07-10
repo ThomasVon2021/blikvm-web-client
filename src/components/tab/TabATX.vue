@@ -30,7 +30,7 @@
 
 <script setup>
 import { mergeProps } from 'vue'
-import http from '../utils/http.js';
+import http from '@/utils/http.js';
 
 const triggerPowerButton = async (button) => {
   try {

@@ -8,7 +8,7 @@
         </template>
 
         <v-card min-width="300">
-            <v-lable>Develop later</v-lable> 
+            <v-label>Develop later</v-label> 
             <v-list>
                 <v-list-item>
                     <v-switch v-model="model" color="purple" label="Absolute mode" hide-details></v-switch>

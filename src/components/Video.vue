@@ -5,7 +5,7 @@
         <video v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove" @mousedown="handleMouseDown" @mouseup="handleMouseUp"
         @wheel="handleWheel" @contextmenu="handleContextMenu"></video>
 
-        <Keyboard v-if="store.isKeyboardOpen" :input="inputKey"  @onKeyPress="handleKeyPress" @onKeyReleased="handleKeyReleased" />
+        <TabKeyboard v-if="store.isKeyboardOpen" :input="inputKey"  @onKeyPress="handleKeyPress" @onKeyReleased="handleKeyReleased" />
     </div>
 </template>
 
@@ -200,7 +200,9 @@ onMounted(() => {
     });
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    initVideo();
+    if(videoMode.value === 'h264' ){
+      initVideo();
+    }
 });
 
 onBeforeUnmount(() => {
