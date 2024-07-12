@@ -120,10 +120,9 @@ async function toggleSwitch() {
   }
 }
 
-async function changeSwitchModle(){
+async function changeSwitchModle() {
   try {
-    if(switchEnabled.value === true)
-    {
+    if (switchEnabled.value === true) {
 
     }
     const response = await http.post(`/switch/setmodule?module=${switchValue.value}`);
@@ -188,11 +187,14 @@ async function fetchSwitchConfig() {
 async function fetchSwitchList() {
   try {
     const response = await http.post('/switch/getlist');
-    if (response.data.code === 0) {
-      console.log('get switch list successfully:', response.data);
-      switchModles.value = response.data.data.list;
-      switchValue.value = response.data.data.module;
-    } else {
+    if (response.status === 200) {
+      if (response.data.code === 0) {
+        console.log('get switch list successfully:', response.data);
+        switchModles.value = response.data.data.list;
+        switchValue.value = response.data.data.module;
+      }
+    }
+    else {
       console.error('Failed to set switch devicepath:', response);
     }
   } catch (error) {
