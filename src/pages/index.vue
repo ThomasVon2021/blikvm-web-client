@@ -6,41 +6,39 @@
                 <h5>Powered by BliCube 2019-present</h5>
                 <h5>All rights reserved worldwide</h5>
             </div>
-            <v-dialog v-model="openWindowLogin" width="auto" persistent>
-                <div class="py-4">
-                    <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
-                        <div class="text-subtitle-1 text-medium-emphasis">{{ $t('username') }}</div>
-
-                        <v-text-field v-model="user" density="compact" :placeholder="$t('username')"
-                            prepend-inner-icon="mdi-email-outline" variant="outlined" @keyup.enter="handleLoginClick"></v-text-field>
-
-                        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-                            {{ $t('password') }}
-                        </div>
-
-                        <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                            :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('enterPassword')"
-                            prepend-inner-icon="mdi-lock-outline" variant="outlined"
-                            @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"></v-text-field>
-
-                        <div class="text-subtitle-1 text-medium-emphasis">{{ $t('oneTimePassword') }}</div>
-
-                        <v-otp-input v-model="otp" type="password" :disabled="validating" true-value="yes"
-                            false-value="no" @keyup.enter="handleLoginClick"></v-otp-input>
-
-                        <v-card class="mb-12" color="surface-variant" variant="tonal">
-                            <v-card-text class="text-medium-emphasis text-caption">
-                                {{ $t('warning') }}:<div class="warning">{{ errorMessage }}</div>
-                                {{ $t('accountLockMessage', { forgotLoginPassword: $t('forgotLoginPassword') }) }}
-                            </v-card-text>
-                        </v-card>
-
-                        <v-btn :loading="validating" block class="mb-8" color="blue" size="large" variant="tonal"
-                            @click="handleLoginClick">
-                            {{ $t('login') }}
-                        </v-btn>
-                    </v-card>
-                </div>
+            <v-dialog v-model="openWindowLogin" persistent>
+                <v-container>
+                    <v-row justify="center">
+                        <v-col cols="12" sm="8" md="6" lg="4">
+                            <v-card class="pa-12 pb-8" elevation="8" rounded="lg">
+                                <div class="text-subtitle-1 text-medium-emphasis">{{ $t('username') }}</div>
+    
+                                <v-text-field v-model="user" density="compact" :placeholder="$t('username')"
+                                    prepend-inner-icon="mdi-email-outline" variant="outlined" @keyup.enter="handleLoginClick"></v-text-field>
+    
+                                <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                                    {{ $t('password') }}
+                                </div>
+    
+                                <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('enterPassword')"
+                                    prepend-inner-icon="mdi-lock-outline" variant="outlined"
+                                    @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"></v-text-field>
+    
+                                <v-card v-if="errorMessage" class="mb-12" color="surface-variant" variant="tonal">
+                                    <v-card-text class="text-medium-emphasis text-caption">
+                                        {{ $t('warning') }}:<div class="warning">{{ errorMessage }}</div>
+                                    </v-card-text>
+                                </v-card>
+    
+                                <v-btn :loading="validating" block class="mb-8" color="blue" size="large" variant="tonal"
+                                    @click="handleLoginClick">
+                                    {{ $t('login') }}
+                                </v-btn>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-container>
             </v-dialog>
         </div>
     </div>
@@ -73,7 +71,6 @@ const handleLoginClick = async () => {
             username: user.value,
             password: password.value
         };
-        console.log('requestBody:', requestBody);
         const response = await http.post('/login', requestBody);
         if (response.data.code === 0) {
 
