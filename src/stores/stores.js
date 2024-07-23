@@ -5,7 +5,11 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     isKeyboardOpen: false,
     videoMode: "mjpeg",
-    username: "admin"
+    username: "admin",
+    mouseStatus: false,
+    hidEnable: true,
+    absoluteMode: true,
+    keyboardStatus: false
   }),
   actions: {
     switchKeyboardStatus() {
