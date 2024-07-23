@@ -4,26 +4,29 @@
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
             <TabNotification />
-            
-            <v-btn icon class="toolbar-btn" size="30" @click="store.switchKeyboardStatus">
-                <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
-                <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
-            </v-btn>
             <TabSwitch />
             <TabMSD />
             <TabVideo />
-            <Mouse />
-            <ATX />
-            <Language />
+            <v-btn icon :class="{'active-toolbar-btn': keyboardStatus, 'inactive-toolbar-btn': !keyboardStatus}" size="30" @click="store.switchKeyboardStatus">
+                <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
+                <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
+            </v-btn>
+            <TabMouse />
+            <TabATX />
+            <TabLanguage />
+            <TabUser/>
+            
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
                 <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? 'FullScreen-Exit' : 'FullScreen'
                     }}</v-tooltip>
             </v-btn>
+            
             <v-btn icon @click="hideAppBar()" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">mdi-chevron-up</v-icon>
                 <v-tooltip activator="parent" location="bottom">Hide</v-tooltip>
             </v-btn>
+            
         </div>
     </v-app-bar>
     <v-icon id="drop-down-btn" v-if="!showAppBar" @click="expandAppBar()" color="primary">
@@ -34,10 +37,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useAppStore } from '@/stores/stores';
+import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
 const showAppBar = ref(true);
 const isFullScreen = ref(false);
+const { keyboardStatus } = storeToRefs(store);
 
 const toggleFullScreen = () => {
     const doc = window.document;
@@ -96,5 +101,23 @@ function expandAppBar() {
     position: fixed;
     top: 0;
     right: 0;
+}
+
+.active-toolbar-btn {
+    color: rgb(52, 231, 8);
+    border: 2px solid rgb(52, 231, 8);
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+.inactive-toolbar-btn {
+    color:red;
+    border: 2px solid red;
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
 }
 </style>

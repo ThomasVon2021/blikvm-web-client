@@ -124,37 +124,49 @@
  */
 
 export class RateLimitedMouse {
+
+    static isAbsoluteMode = true;
+    static sensitivity = 1.0;
     /**
      * @param {number} msBetweenEvents Number of milliseconds to
      * wait between sending low-priority mouse events to the backend.
      * @param {function(Object)} sendEventFn Function that sends a parsed mouse
      * event to the backend server.
      */
-    constructor(msBetweenEvents, sendEventFn) {
+    constructor(msBetweenEvents, sendEventFn, mode = true) {
         this._msBetweenEvents = msBetweenEvents;
         this._sendEventFn = sendEventFn;
         this._queuedEvent = null;
         this._eventTimer = null;
+        RateLimitedMouse.isAbsoluteMode = mode;
     }
 
     onMouseDown(jsMouseEvt) {
-        this._processHighPriorityEvent(parseMouseEvent(jsMouseEvt));
+        this._processHighPriorityEvent(this._parseMouseEvent(jsMouseEvt));
     }
 
     onMouseUp(jsMouseEvt) {
-        this._processHighPriorityEvent(parseMouseEvent(jsMouseEvt));
+        this._processHighPriorityEvent(this._parseMouseEvent(jsMouseEvt));
     }
 
     onMouseMove(jsMouseEvt) {
-        this._processLowPriorityEvent(parseMouseEvent(jsMouseEvt));
+        this._processLowPriorityEvent(this._parseMouseEvent(jsMouseEvt));
     }
 
     onWheel(jsMouseEvt) {
-        this._processLowPriorityEvent(parseMouseEvent(jsMouseEvt));
+        this._processLowPriorityEvent(this._parseMouseEvent(jsMouseEvt));
     }
 
     setTimeoutWindow(msBetweenEvents) {
         this._msBetweenEvents = msBetweenEvents;
+    }
+
+    static setMode(mode) {
+        RateLimitedMouse.isAbsoluteMode = mode;
+    }
+
+    static setSensitivity(value){
+        RateLimitedMouse.sensitivity = value;
     }
 
     _processHighPriorityEvent(mouseInfo) {
@@ -165,7 +177,7 @@ export class RateLimitedMouse {
     }
 
     _processLowPriorityEvent(mouseInfo) {
-        if (this._isInTimeoutWindow()) {
+        if (this._isInTimeoutWindow() && RateLimitedMouse.isAbsoluteMode === true) {
             this._queuedEvent = mouseInfo;
         } else {
             this._emitEvent(mouseInfo);
@@ -202,26 +214,8 @@ export class RateLimitedMouse {
     _isInTimeoutWindow() {
         return this._eventTimer !== null;
     }
-}
 
-/**
- * Normalize mouse wheel delta to a value that's consistent across browsers.
- * Different browsers use different values for the delta, so we reduce it to a
- * simple -1, 0, or 1.
- *
- * @param {number} delta The mouse wheel delta value from the browser's mouse
- * event.
- * @returns {number} A value of -1, 0, or 1 representing whether the delta is
- * negative, zero, or positive, respectively.
- */
-function normalizeWheelDelta(delta) {
-    if (!delta) {
-        return 0;
-    }
-    return Math.sign(delta);
-}
-
-/**
+    /**
  * Parses a standard JavaScript mouse event into a TinyPilot-specific object
  * containing information about the mouse event.
  *
@@ -241,18 +235,51 @@ function normalizeWheelDelta(delta) {
  * - horizontalWheelDelta (number) A -1, 0, or 1 representing movement of the
  *   mouse's horizontal scroll wheel.
  */
-function parseMouseEvent(evt) {
-    const boundingRect = evt.target.getBoundingClientRect();
-    const cursorX = Math.max(0, evt.clientX - boundingRect.left);
-    const cursorY = Math.max(0, evt.clientY - boundingRect.top);
-    const width = boundingRect.right - boundingRect.left;
-    const height = boundingRect.bottom - boundingRect.top;
+    _parseMouseEvent(evt) {
+    if (RateLimitedMouse.isAbsoluteMode === false) {
+        return {
+            isAbsoluteMode: false,
+            buttons: evt.buttons,
+            relativeX: evt.movementX,
+            relativeY: evt.movementY,
+            verticalWheelDelta: normalizeWheelDelta(evt.deltaY),
+            horizontalWheelDelta: normalizeWheelDelta(evt.deltaX),
+            sensitivity: RateLimitedMouse.sensitivity,
+        };
+    } else {
+        const boundingRect = evt.target.getBoundingClientRect();
+        const cursorX = Math.max(0, evt.clientX - boundingRect.left);
+        const cursorY = Math.max(0, evt.clientY - boundingRect.top);
+        const width = boundingRect.right - boundingRect.left;
+        const height = boundingRect.bottom - boundingRect.top;
 
-    return {
-        buttons: evt.buttons,
-        relativeX: Math.min(1.0, Math.max(0.0, cursorX / width)),
-        relativeY: Math.min(1.0, Math.max(0.0, cursorY / height)),
-        verticalWheelDelta: normalizeWheelDelta(evt.deltaY),
-        horizontalWheelDelta: normalizeWheelDelta(evt.deltaX),
-    };
+        return {
+            isAbsoluteMode: true,
+            buttons: evt.buttons,
+            relativeX: Math.min(1.0, Math.max(0.0, cursorX / width)),
+            relativeY: Math.min(1.0, Math.max(0.0, cursorY / height)),
+            verticalWheelDelta: normalizeWheelDelta(evt.deltaY),
+            horizontalWheelDelta: normalizeWheelDelta(evt.deltaX),
+        };
+    }
 }
+}
+
+/**
+ * Normalize mouse wheel delta to a value that's consistent across browsers.
+ * Different browsers use different values for the delta, so we reduce it to a
+ * simple -1, 0, or 1.
+ *
+ * @param {number} delta The mouse wheel delta value from the browser's mouse
+ * event.
+ * @returns {number} A value of -1, 0, or 1 representing whether the delta is
+ * negative, zero, or positive, respectively.
+ */
+function normalizeWheelDelta(delta) {
+    if (!delta) {
+        return 0;
+    }
+    return Math.sign(delta);
+}
+
+

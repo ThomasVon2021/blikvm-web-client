@@ -489,17 +489,22 @@ const getMSDList = async () => {
 
   try {
     const response = await http.post(`/msd/images`);
-    console.log("/msd/images:", response.data);
-    items.value = response.data.data;
-    maxMSDImageSize.value = Math.floor(convertBytesToGB(items.value.size - items.value.used));
-    console.log("items:", items.value, "maxMSDImageSize:", maxMSDImageSize.value)
-    // Function to initialize switches array based on the number of rows
-    const initializeSwitches = (rowCount) => {
-      return Array(rowCount).fill(false); // Assuming the default value is false
-    };
+    if(response.status === 200 && response.data.code === 0){
+      console.log("/msd/images:", response.data);
+      items.value = response.data.data;
+      maxMSDImageSize.value = Math.floor(convertBytesToGB(items.value.size - items.value.used));
+      console.log("items:", items.value, "maxMSDImageSize:", maxMSDImageSize.value)
+      // Function to initialize switches array based on the number of rows
+      const initializeSwitches = (rowCount) => {
+        return Array(rowCount).fill(false); // Assuming the default value is false
+      };
 
-    // Populate the switches array based on the number of rows
-    switches.value = initializeSwitches(items.value.length);
+      // Populate the switches array based on the number of rows
+      switches.value = initializeSwitches(items.value.length);
+    }else{
+      console.log("/msd/images post error");
+    }
+
   } catch (error) {
     console.error('Error during atx button trigger:', error);
     const messageType = 'Error';
@@ -530,8 +535,12 @@ const handleRefreshMSDListClick = async () => {
 const getMSDState = async () => {
   try {
     const response = await http.post('/msd/state');
-    switchImageCreateState(response.data.data.msd_img_created);
-    switchImageConnectState(response.data.data.msd_status);
+    if(response.status === 200 && response.data.code === 0){
+      switchImageCreateState(response.data.data.msd_img_created);
+      switchImageConnectState(response.data.data.msd_status);
+    }else{
+      console.error('getMSDState error:', response.data);
+    }
 
   } catch (error) {
     console.error('getMSDState:', error);

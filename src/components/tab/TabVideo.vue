@@ -100,12 +100,16 @@ const resetResultText = ref('');
 async function fetchVideoConfig() {
   try {
     const response = await http.post('/video/config?action=get')
-    const data = response.data.data;
-    slider_fps.value = data.fps;
-    slider_mjpeg_quality.value = data.quality;
-    slider_h264_mbps.value = data.kbps / 1000; // Convert to Mbps
-    slider_h264_gop.value = data.gop;
-    mjpeg_port.value = data.port
+    if(response.status === 200 && response.data.code === 0){
+      const data = response.data.data;
+      slider_fps.value = data.fps;
+      slider_mjpeg_quality.value = data.quality;
+      slider_h264_mbps.value = data.kbps / 1000; // Convert to Mbps
+      slider_h264_gop.value = data.gop;
+      mjpeg_port.value = data.port;
+    }else{
+      console.log("get video config error");
+    }
 }
   catch (error) {
     console.log(error);

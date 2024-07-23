@@ -32,11 +32,20 @@
 
         <v-col cols="12" sm="6" md="4">
           <v-autocomplete label="Choose a Channel" class="ml-3 flex-grow-1" v-model="channelValue" :items="channelItems"
-            color="primary" variant="filled" hide-details></v-autocomplete>
+            color="primary" variant="filled" hide-details @update:modelValue="changeSwitchChannel"></v-autocomplete>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" class="text-center align-center">
+          <v-chip :color="switchStateColor" class="ma-2">{{ switchState }}</v-chip>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" class="text-center align-center">
+          <v-btn @click="fetchSwitchConfig" append-icon="mdi-refresh" :ripple="true" color="primary">
+            <v-tooltip>{{ $t('refreshList') }}</v-tooltip>
+          </v-btn>
         </v-col>
 
-        <v-col cols="12">
-          <div class="text-center mt-6">
+
+        <v-col cols="12" sm="6" md="4" class="text-center align-center">
+          <div class="text-center">
             <v-dialog v-model="dialog" persistent @keydown.stop @keyup.stop>
               <template v-slot:activator="{ props }">
                 <v-btn color="primary" v-bind="props"> Switch Config </v-btn>
@@ -97,9 +106,23 @@ const switchEnabled = ref(false);
 const availableSwitch = ref(false);
 const switchEnabledResultText = ref("");
 const channelItems = ref();
+const switchState = ref('None');
 
 const switchLabel = computed(() => (switchEnabled.value ? 'enable' : 'disable'));
+const switchStateColor = computed(() => {
+  return switchState.value === 'RUNNING' ? 'success' : 'error';
+});
 
+async function changeSwitchChannel() {
+  try {
+      const response = await http.post(`/switch/change?channel=${channelValue.value}&module=${switchValue.value}`);
+      if (response.status === 200 && response.data.code === 0) {
+        console.log('set module success');
+      }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function toggleSwitch() {
   try {
@@ -113,6 +136,7 @@ async function toggleSwitch() {
         availableSwitch.value = true;
         switchEnabledResultText.value = response.data.msg;
       }
+      await fetchSwitchConfig();
     }
 
   } catch (error) {
@@ -120,16 +144,12 @@ async function toggleSwitch() {
   }
 }
 
-async function changeSwitchModle(){
+async function changeSwitchModle() {
   try {
-    if(switchEnabled.value === true)
-    {
-
-    }
-    const response = await http.post(`/switch/setmodule?module=${switchValue.value}`);
-    if (response.data.code === 0) {
-      console.log('set module success');
-    }
+      const response = await http.post(`/switch/setmodule?module=${switchValue.value}`);
+      if (response.data.code === 0) {
+        console.log('set module success');
+      }
     await fetchSwitchConfig();
   } catch (error) {
     console.log(error);
@@ -177,6 +197,7 @@ async function fetchSwitchConfig() {
       channelItems.value = response.data.data.channelLable;
       channelValue.value = response.data.data.channel;
       devicePath.value = response.data.data.devicePath;
+      switchState.value = response.data.data.state;
     } else {
       console.error('Failed to get switch state:', response.data);
     }
@@ -188,11 +209,14 @@ async function fetchSwitchConfig() {
 async function fetchSwitchList() {
   try {
     const response = await http.post('/switch/getlist');
-    if (response.data.code === 0) {
-      console.log('get switch list successfully:', response.data);
-      switchModles.value = response.data.data.list;
-      switchValue.value = response.data.data.module;
-    } else {
+    if (response.status === 200) {
+      if (response.data.code === 0) {
+        console.log('get switch list successfully:', response.data);
+        switchModles.value = response.data.data.list;
+        switchValue.value = response.data.data.module;
+      }
+    }
+    else {
       console.error('Failed to set switch devicepath:', response);
     }
   } catch (error) {
