@@ -18,6 +18,12 @@ http.interceptors.request.use(config => {
     }
     return config;
 }, error => {
+    return Promise.reject(error);
+});
+
+http.interceptors.response.use(response => {
+    return response;
+}, error => {
     if (error.response && error.response.status === 401) {
         console.error('Authentication failed, redirecting to login page...');
         window.location.href = '/';
