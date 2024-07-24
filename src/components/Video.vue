@@ -20,10 +20,10 @@ import { useAppStore } from '@/stores/stores';
 import Janus from "@/utils/janus.js";
 import adapter from 'webrtc-adapter';
 import { storeToRefs } from 'pinia';
-import {handleWSMessage} from '@/utils/websocket.js'
+import { handleWSMessage, sendPing } from '@/utils/websocket.js'
 
 const store = useAppStore();
-const { videoMode,absoluteMode } = storeToRefs(store);
+const { videoMode, absoluteMode } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
@@ -73,29 +73,29 @@ let rateLimitedMouse = null;
 
 const handleMouseMove = (event) => {
   event.preventDefault();
-  if( rateLimitedMouse!= null){
+  if (rateLimitedMouse != null) {
     rateLimitedMouse.onMouseMove(event);
   }
- 
+
 };
 
 const handleMouseDown = (event) => {
-  if( rateLimitedMouse!= null){
-  rateLimitedMouse.onMouseDown(event);
-}
+  if (rateLimitedMouse != null) {
+    rateLimitedMouse.onMouseDown(event);
+  }
 };
 
 const handleMouseUp = (event) => {
-  if( rateLimitedMouse!= null){
-  rateLimitedMouse.onMouseUp(event);
-}
+  if (rateLimitedMouse != null) {
+    rateLimitedMouse.onMouseUp(event);
+  }
 };
 
 const handleWheel = (event) => {
   event.preventDefault();
-  if( rateLimitedMouse!= null){
-  rateLimitedMouse.onWheel(event);
-}
+  if (rateLimitedMouse != null) {
+    rateLimitedMouse.onWheel(event);
+  }
 };
 
 const handleContextMenu = (event) => {
@@ -205,13 +205,13 @@ const onVideoLoaded = () => {
 
 const requestPointerLock = () => {
   const element = document.getElementById('kvm');
-  if ( absoluteMode.value === false && element.requestPointerLock) {
+  if (absoluteMode.value === false && element.requestPointerLock) {
     element.requestPointerLock();
   }
 };
 
 const handlePointerLockChange = () => {
-  if ( document.pointerLockElement === document.getElementById('kvm')) {
+  if (document.pointerLockElement === document.getElementById('kvm')) {
     console.log('Pointer is locked');
   } else {
     console.log('Pointer is unlocked');
@@ -237,8 +237,15 @@ onMounted(() => {
     initVideo();
   }
   document.addEventListener('mousemove', handleMouseMove);
+  const pingInterval = setInterval(() => {
+    sendPing(ws);
+  }, 5000);
 });
 
+onUnmounted(() => {
+    clearInterval(pingInterval);
+  });
+  
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown);
   window.removeEventListener('keyup', handleKeyUp);

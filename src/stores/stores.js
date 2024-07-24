@@ -9,7 +9,8 @@ export const useAppStore = defineStore('app', {
     mouseStatus: false,
     hidEnable: true,
     absoluteMode: true,
-    keyboardStatus: false
+    keyboardStatus: false,
+    delayMS: 0
   }),
   actions: {
     switchKeyboardStatus() {
