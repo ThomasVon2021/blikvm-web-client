@@ -188,7 +188,6 @@ async function save() {
 
 async function fetchSwitchConfig() {
   try {
-    console.log("switchValue.value1:", switchValue.value);
     const response = await http.post(`/switch/state?module=${switchValue.value}`);
     if (response.data.code === 0) {
       console.log('get switch state successfully:', response.data);

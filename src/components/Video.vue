@@ -20,15 +20,16 @@ import { useAppStore } from '@/stores/stores';
 import Janus from "@/utils/janus.js";
 import adapter from 'webrtc-adapter';
 import { storeToRefs } from 'pinia';
-import { handleWSMessage, sendPing } from '@/utils/websocket.js'
+import { handleWSMessage, sendPing } from '@/utils/websocket.js';
+import http from '@/utils/http.js';
 
 const store = useAppStore();
-const { videoMode, absoluteMode } = storeToRefs(store);
+const { videoMode, absoluteMode, videoServerPort} = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
 
-const mjpegUrl = ref(`http://${Config.host_ip}:10004/stream`);
+const mjpegUrl = ref(`http://${Config.host_ip}:${videoServerPort.value}/stream`);
 
 const ws = new WebSocket(`ws://${Config.host_ip}:10001`);
 
@@ -128,7 +129,6 @@ const handleKeyUp = (event) => {
 
 watch(pressedKeys.value, (newVal) => {
   const obj = { k: newVal };
-  // console.log(JSON.stringify(obj));
   ws.send(JSON.stringify(obj));
 });
 
@@ -222,11 +222,23 @@ const handlePointerLockError = () => {
   console.error('Error while locking pointer');
 };
 
+const getVideoStatus = async  () => {
+  const response = await http.post('/video/state');
+    if(response.status === 200 && response.data.code === 0){
+        store.resolutionWidth = response.data.data.width;
+        store.resolutionHeight = response.data.data.height;
+        store.capturedFps = response.data.data.capturedFps;
+        store.queuedFps = response.data.data.capturedFps;
+    }else{
+      console.log('get video state error');
+    }
+};
+
+let pingInterval = null; 
 onMounted(() => {
   const limitTime = 100;
   rateLimitedMouse = new RateLimitedMouse(limitTime, (mouseEvent) => {
     const obj = { m: mouseEvent };
-    // console.log(JSON.stringify(obj));
     ws.send(JSON.stringify(obj));
   }, absoluteMode.value);
   window.addEventListener('keydown', handleKeyDown);
@@ -237,9 +249,12 @@ onMounted(() => {
     initVideo();
   }
   document.addEventListener('mousemove', handleMouseMove);
-  const pingInterval = setInterval(() => {
+  pingInterval = setInterval(() => {
     sendPing(ws);
+    getVideoStatus();
   }, 5000);
+
+
 });
 
 onUnmounted(() => {

@@ -38,6 +38,7 @@
 import { ref } from 'vue';
 import { useAppStore } from '@/stores/stores';
 import { storeToRefs } from 'pinia';
+import http from '@/utils/http.js';
 
 const store = useAppStore();
 const showAppBar = ref(true);
@@ -67,6 +68,25 @@ function hideAppBar() {
 function expandAppBar() {
     showAppBar.value = true;
 }
+
+async function getDeviceVersion() {
+  try {
+    const response = await http.post('/device');
+    
+    if (response.status === 200 && response.data.code === 0) {
+      store.deviceVersion = response.data.data.device;
+      console.log('version:', store.deviceVersion);
+    } else {
+      console.log('Response error:', response);
+    }
+  } catch (error) {
+    console.error('Request failed:', error);
+  }
+}
+
+onMounted(() => {
+    getDeviceVersion();
+});
 </script>
 
 <style>

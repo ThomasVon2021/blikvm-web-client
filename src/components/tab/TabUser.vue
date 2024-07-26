@@ -139,8 +139,6 @@
     router.push('/');
   };
 
-
-
   </script>
   
   <style scoped>

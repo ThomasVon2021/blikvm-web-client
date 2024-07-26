@@ -87,13 +87,11 @@ import http from '@/utils/http.js';
 
 const store = useAppStore();
 const menu = ref(false);
-const { videoMode } = storeToRefs(store);
+const { videoMode, videoServerPort } = storeToRefs(store);
 const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);
-const slider_h264_gop = ref(30);
-const mjpeg_port = ref(8008);
-// 
+const slider_h264_gop = ref(30); 
 const resetDialog = ref(false);
 const resetResultText = ref('');
 
@@ -106,7 +104,7 @@ async function fetchVideoConfig() {
       slider_mjpeg_quality.value = data.quality;
       slider_h264_mbps.value = data.kbps / 1000; // Convert to Mbps
       slider_h264_gop.value = data.gop;
-      mjpeg_port.value = data.port;
+      videoServerPort.value = data.port;
     }else{
       console.log("get video config error");
     }
@@ -120,7 +118,7 @@ async function resetStream() {
   try {
     const response = await http.post('/video/config?action=set', {
       data: {
-        port: mjpeg_port.value,
+        port: videoServerPort.value,
         fps: slider_fps.value,
         quality: slider_mjpeg_quality.value,
         kbps: slider_h264_mbps.value * 1000, // Convert to kbps

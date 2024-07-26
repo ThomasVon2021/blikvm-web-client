@@ -10,7 +10,14 @@ export const useAppStore = defineStore('app', {
     hidEnable: true,
     absoluteMode: true,
     keyboardStatus: false,
-    delayMS: 0
+    deviceVersion: "BliKVM",
+    delayMS: 0,
+    videoServerPort: 10004,
+    resolutionWidth: 0,
+    resolutionHeight: 0,
+    capturedFps: 0,
+    queuedFps: 0
+
   }),
   actions: {
     switchKeyboardStatus() {
