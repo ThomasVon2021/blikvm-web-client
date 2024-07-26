@@ -20,7 +20,7 @@ function handleWSMessage( event, store ){
     if( message.data.pong != null){
       let timestamp=new Date().getTime();
       let delay = (timestamp - message.data.pong)/2;
-      store.delayMS = Math.round(delay*100)/100;
+      store.LatencyMS = Math.round(delay*100)/100;
     }
 }
 

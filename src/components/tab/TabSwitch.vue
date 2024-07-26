@@ -176,7 +176,7 @@ async function save() {
     module: switchValue.value,
     channelLable: channelItems.value
   };
-  const lableResponse = await http.post('/switch/setlable', requestLableBody);
+  const lableResponse = await http.post('/switch/setlabel', requestLableBody);
   if (lableResponse.status === 200) {
     console.log('switch set lable successfully:', lableResponse.data);
   } else {

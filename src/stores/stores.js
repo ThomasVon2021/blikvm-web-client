@@ -11,7 +11,7 @@ export const useAppStore = defineStore('app', {
     absoluteMode: true,
     keyboardStatus: false,
     deviceVersion: "BliKVM",
-    delayMS: 0,
+    LatencyMS: 0,
     videoServerPort: 10004,
     resolutionWidth: 0,
     resolutionHeight: 0,
