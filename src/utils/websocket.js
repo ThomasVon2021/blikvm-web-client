@@ -22,6 +22,11 @@ function handleWSMessage( event, store ){
       let delay = (timestamp - message.data.pong)/2;
       store.LatencyMS = Math.round(delay*100)/100;
     }
+    if( message.data.systemInfo != null){
+      store.cpuLoad = message.data.systemInfo.cpuLoad;
+      store.uptime = message.data.systemInfo.uptime;
+      store.temperature = message.data.systemInfo.temperature;
+    }
 }
 
 function sendPing(ws){

@@ -75,7 +75,8 @@ async function getDeviceVersion() {
     
     if (response.status === 200 && response.data.code === 0) {
       store.deviceVersion = response.data.data.device;
-      console.log('version:', store.deviceVersion);
+      store.deviceType = response.data.data.deviceType;
+      store.manufacturer = response.data.data.manufacturer;
     } else {
       console.log('Response error:', response);
     }
