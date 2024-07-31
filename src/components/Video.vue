@@ -281,7 +281,7 @@ onBeforeUnmount(() => {
   widows: 100%;
 }
 
-img {
+img,video {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;

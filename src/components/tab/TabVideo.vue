@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-video</v-icon>
-        <v-tooltip activator="parent" location="bottom">Mouse</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">Video</v-tooltip>
       </v-btn>
     </template>
     <UiParentCard title="video setting">
