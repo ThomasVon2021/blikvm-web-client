@@ -1,3 +1,5 @@
+
+<!-- Material Design Icons: https://pictogrammers.com/library/mdi/ -->
 <template>
     <v-app-bar v-if="showAppBar" height="40" color="#54a4ff" app dark flat>
         <v-toolbar-title id="toolbar-title">BLIKVM</v-toolbar-title>
@@ -7,6 +9,7 @@
             <TabSwitch />
             <TabMSD />
             <TabVideo />
+            <TabText />
             <v-btn icon :class="{'active-toolbar-btn': keyboardStatus, 'inactive-toolbar-btn': !keyboardStatus}" size="30" @click="store.switchKeyboardStatus">
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
                 <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
@@ -122,6 +125,7 @@ onMounted(() => {
     position: fixed;
     top: 0;
     right: 0;
+    z-index:100;
 }
 
 .active-toolbar-btn {

@@ -21,7 +21,10 @@ export const useAppStore = defineStore('app', {
     queuedFps: 0,
     cpuLoad: 0,
     uptime: '0',
-    temperature: 0
+    temperature: 0,
+    startOcr: false,
+    ocrSelection: false,
+    ocrLang: []
   }),
   actions: {
     switchKeyboardStatus() {

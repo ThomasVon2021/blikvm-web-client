@@ -1,13 +1,62 @@
 <template>
-  <div id="kvm" @click="requestPointerLock">
-    <img v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove" @mousedown="handleMouseDown"
-      @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" />
-    <video v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
+  <div id="kvm" class="kvm-area" @click="requestPointerLock">
+    <img id="image" draggable="false" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
+      @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" />
+    <video draggable="false" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel"
       @contextmenu="handleContextMenu"></video>
 
     <TabKeyboard v-if="store.isKeyboardOpen" :input="inputKey" @onKeyPress="handleKeyPress"
       @onKeyReleased="handleKeyReleased" />
+
+    <div v-if="ocrSelection" class="selection-overlay">
+      <div class="selection-box" :style="selectionStyle"></div>
+    </div>
+
+    <v-dialog v-model="ocrDialog">
+      <v-card>
+        <v-card-text>
+          "Are you sure to perform OCR recognition. This will take several tens of seconds."
+        </v-card-text>
+        <v-card-actions>
+          <v-row>
+            <v-col cols="6">
+              <v-btn color="primary" block @click="ocrRecognition" >
+                OK
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn color="error" block @click="ocrDialog = false">
+                Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="ocrTextFlag">
+      <v-card>
+        <v-card-text>
+          {{ocrText}}
+        </v-card-text>
+        <v-card-actions>
+          <v-row>
+            <v-col cols="6">
+              <v-btn color="primary" block @click="ocrTextFlag = false" class="copy-btn">
+                copy
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn color="error" block @click="ocrTextFlag = false">
+                Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -22,12 +71,21 @@ import adapter from 'webrtc-adapter';
 import { storeToRefs } from 'pinia';
 import { handleWSMessage, sendPing } from '@/utils/websocket.js';
 import http from '@/utils/http.js';
+import ClipboardJS from 'clipboard';
 
 const store = useAppStore();
-const { videoMode, absoluteMode, videoServerPort} = storeToRefs(store);
+const { videoMode, absoluteMode, videoServerPort, ocrSelection } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
+let ocrStartX = 0;
+let ocrStartY = 0;
+let isSelecting = false;
+const selection = ref({ x: 0, y: 0, width: 0, height: 0 });
+const realSelection = ref({ left: 0, right: 0, width: 0, height: 0 });
+const ocrDialog = ref(false);
+const ocrText = ref('');
+const ocrTextFlag = ref(false);
 
 const mjpegUrl = ref(`http://${Config.host_ip}:${videoServerPort.value}/stream`);
 
@@ -68,12 +126,39 @@ const handleKeyReleased = (button) => {
   }
 };
 
+const selectionStyle = computed(() => ({
+  position: 'absolute',
+  border: '2px dashed #007bff',
+  backgroundColor: 'rgba(0, 123, 255, 0.1)',
+  left: `${selection.value.x}px`,
+  top: `${selection.value.y}px`,
+  width: `${selection.value.width}px`,
+  height: `${selection.value.height}px`
+}));
 
 
 let rateLimitedMouse = null;
 
 const handleMouseMove = (event) => {
   event.preventDefault();
+
+  if (ocrSelection.value === true && isSelecting === true) {
+    const kvmElement = document.getElementById('kvm');
+  if (!kvmElement) return;
+  const rect = kvmElement.getBoundingClientRect();
+    const x = Math.min(event.clientX - rect.left, ocrStartX);
+    const y = Math.min(event.clientY - rect.top, ocrStartY);
+    const width = Math.abs(event.clientX - rect.left - ocrStartX);
+    const height = Math.abs(event.clientY - rect.top - ocrStartY);
+    const videoWidth = rect.right - rect.left;
+    const videoHeight = rect.bottom - rect.top;
+    realSelection.width = store.resolutionWidth * width / videoWidth;
+    realSelection.height = store.resolutionHeight * height / videoHeight;
+
+    selection.value = { x, y, width, height };
+    return;
+  }
+
   if (rateLimitedMouse != null) {
     rateLimitedMouse.onMouseMove(event);
   }
@@ -81,12 +166,42 @@ const handleMouseMove = (event) => {
 };
 
 const handleMouseDown = (event) => {
+  event.preventDefault();
+
+  if (ocrSelection.value === true) {
+    const kvmElement = document.getElementById('kvm');
+    if (!kvmElement || !ocrSelection.value) return;
+
+    // Get the position within the kvm element
+    const rect = kvmElement.getBoundingClientRect();
+    const kvmLeft = rect.left;
+    const kvmTop = rect.top;
+
+    ocrStartX = event.clientX - kvmLeft;
+    ocrStartY = event.clientY - kvmTop;
+    const width = rect.right - rect.left;
+    const height = rect.bottom - rect.top;
+    realSelection.left = store.resolutionWidth * ocrStartX / width;
+    realSelection.top = store.resolutionHeight * ocrStartY / height;
+    isSelecting = true;
+
+    selection.value = { x: ocrStartX, y: ocrStartY, width: 0, height: 0 };
+    return;
+  }
+  
   if (rateLimitedMouse != null) {
     rateLimitedMouse.onMouseDown(event);
   }
 };
 
 const handleMouseUp = (event) => {
+  if (ocrSelection.value === true && isSelecting === true) {
+    isSelecting = false;
+    ocrSelection.value = false;
+    selection.value = { x: 0, y: 0, width: 0, height: 0 };
+    ocrDialog.value = true;
+    return;
+  }
   if (rateLimitedMouse != null) {
     rateLimitedMouse.onMouseUp(event);
   }
@@ -200,7 +315,7 @@ const attachUStreamerPlugin = () => {
 };
 
 const onVideoLoaded = () => {
-  // 这里写你的视频加载完成后的处理逻辑
+  //
 };
 
 const requestPointerLock = () => {
@@ -222,19 +337,49 @@ const handlePointerLockError = () => {
   console.error('Error while locking pointer');
 };
 
-const getVideoStatus = async  () => {
+const getVideoStatus = async () => {
   const response = await http.post('/video/state');
-    if(response.status === 200 && response.data.code === 0){
-        store.resolutionWidth = response.data.data.width;
-        store.resolutionHeight = response.data.data.height;
-        store.capturedFps = response.data.data.capturedFps;
-        store.queuedFps = response.data.data.capturedFps;
-    }else{
-      console.log('get video state error');
-    }
+  if (response.status === 200 && response.data.code === 0) {
+    store.resolutionWidth = response.data.data.width;
+    store.resolutionHeight = response.data.data.height;
+    store.capturedFps = response.data.data.capturedFps;
+    store.queuedFps = response.data.data.capturedFps;
+  } else {
+    console.log('get video state error');
+  }
 };
 
-let pingInterval = null; 
+async function ocrRecognition() {
+  try {
+    ocrDialog.value = false;
+    store.startOcr = true;
+    const response = await http.post('/ocr', {
+      lang: store.ocrLang,
+      rect: {
+        left: realSelection.left,
+        top: realSelection.top,
+        width: realSelection.width,
+        height: realSelection.height
+      }
+    });
+    store.startOcr = false;
+    if (response.status === 200) {
+      const data = response.data.data; // 确保你从 response 中提取了正确的数据
+      ocrText.value = data;
+      // navigator.clipboard only support http
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(data);
+        console.log("Text copied to clipboard:", data);
+      } else {
+        ocrTextFlag.value = true;
+      }
+    }
+  } catch (error) {
+    console.error('Error resetting stream:', error);
+  }
+}
+
+let pingInterval = null;
 onMounted(() => {
   const limitTime = 100;
   rateLimitedMouse = new RateLimitedMouse(limitTime, (mouseEvent) => {
@@ -254,13 +399,20 @@ onMounted(() => {
     getVideoStatus();
   }, 5000);
 
+  new ClipboardJS('.copy-btn', {
+    text: () => ocrText.value
+  }).on('success', () => {
+    console.log('Text copied to clipboard.');
+  }).on('error', () => {
+    console.error('Failed to copy text.');
+  });
 
 });
 
 onUnmounted(() => {
-    clearInterval(pingInterval);
-  });
-  
+  clearInterval(pingInterval);
+});
+
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown);
   window.removeEventListener('keyup', handleKeyUp);
@@ -281,9 +433,47 @@ onBeforeUnmount(() => {
   widows: 100%;
 }
 
-img,video {
+img,
+video {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
+
+.kvm-area {
+  position: relative;
+  width: 100%;
+  /* Adjust based on your layout */
+  height: 300px;
+  /* Adjust based on your layout */
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.selection-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  /* Make sure overlay does not block other elements */
+}
+
+.selection-box {
+  border: 2px dashed #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+  /* Ensure the box is visible */
+}
+
+.selection-info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: white;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
 </style>
