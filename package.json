@@ -11,12 +11,14 @@
   "dependencies": {
     "@mdi/font": "7.0.96",
     "axios": "^1.6.8",
+    "clipboard": "^2.0.11",
     "core-js": "^3.34.0",
     "roboto-fontface": "*",
     "simple-keyboard": "^3.7.80",
     "vue": "^3.4.0",
     "vue-i18n": "^9.13.1",
     "vue-tabler-icons": "^2.21.0",
+    "vue3-resizable": "^0.0.0-alpha.2",
     "vuetify": "^3.5.0",
     "webrtc-adapter": "^9.0.1"
   },
