@@ -417,10 +417,6 @@ onMounted(() => {
     initVideo();
   }
   document.addEventListener('mousemove', handleMouseMove);
-  pingInterval = setInterval(() => {
-    sendPing(ws);
-    getVideoStatus();
-  }, 5000);
 
   new ClipboardJS('.copy-btn', {
     text: () => ocrText.value

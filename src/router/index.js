@@ -35,7 +35,7 @@ for (const route of routes) {
   if (route.name === '/main') {
     console.log(route);
     route.meta = route.meta || {};
-    route.meta.requiresAuth = true;
+    // route.meta.requiresAuth = true;
   }
 }
 

@@ -48,6 +48,12 @@ function handleWSMessage( event, store ){
       store.uptime = message.data.systemInfo.uptime;
       store.temperature = message.data.systemInfo.temperature;
     }
+    if( message.data.videoStatus != null ){
+      store.resolutionWidth = message.data.videoStatus.width;
+      store.resolutionHeight = message.data.videoStatus.height;
+      store.capturedFps = message.data.videoStatus.capturedFps;
+      store.queuedFps = message.data.videoStatus.capturedFps;
+    }
 }
 
 function sendPing(ws){
