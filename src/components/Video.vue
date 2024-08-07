@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -44,7 +43,7 @@
         <v-card-actions>
           <v-row>
             <v-col cols="6">
-              <v-btn color="primary" block @click="ocrRecognition" >
+              <v-btn color="primary" block @click="ocrRecognition">
                 OK
               </v-btn>
             </v-col>
@@ -61,7 +60,7 @@
     <v-dialog v-model="ocrTextFlag">
       <v-card>
         <v-card-text>
-          {{ocrText}}
+          {{ ocrText }}
         </v-card-text>
         <v-card-actions>
           <v-row>
@@ -167,8 +166,8 @@ const handleMouseMove = (event) => {
 
   if (ocrSelection.value === true && isSelecting === true) {
     const kvmElement = document.getElementById('kvm');
-  if (!kvmElement) return;
-  const rect = kvmElement.getBoundingClientRect();
+    if (!kvmElement) return;
+    const rect = kvmElement.getBoundingClientRect();
     const x = Math.min(event.clientX - rect.left, ocrStartX);
     const y = Math.min(event.clientY - rect.top, ocrStartY);
     const width = Math.abs(event.clientX - rect.left - ocrStartX);
@@ -211,7 +210,7 @@ const handleMouseDown = (event) => {
     selection.value = { x: ocrStartX, y: ocrStartY, width: 0, height: 0 };
     return;
   }
-  
+
   if (rateLimitedMouse != null) {
     rateLimitedMouse.onMouseDown(event);
   }
@@ -384,7 +383,9 @@ async function ocrRecognition() {
         width: realSelection.width,
         height: realSelection.height
       }
-    });
+    },
+      { timeout: 60000 }
+    );
     store.startOcr = false;
     if (response.status === 200) {
       const data = response.data.data; // 确保你从 response 中提取了正确的数据
@@ -494,5 +495,4 @@ video {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
 </style>

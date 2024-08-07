@@ -25,8 +25,7 @@ import Config from '@/config.js';
 
 const http = axios.create({
     baseURL: `http://${Config.host_ip}:10001/api`,
-    withCredentials: true,
-    timeout: 30000
+    withCredentials: true
 });
 
 http.interceptors.request.use(config => {
