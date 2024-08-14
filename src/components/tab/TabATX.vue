@@ -33,18 +33,18 @@
         <span>ATX</span>
       </v-tooltip>
     </template>
-    <v-list class="dropdown-menu">
-      <v-list-item @click="powerOn()">
+    <v-list class="dropdown-menu" @mouseenter.stop @mousemove.stop>
+      <v-list-item @click="triggerPowerButton('power')">
         <v-list-item-title>{{ $t('menu.atx_poweron') }} <v-icon>mdi-power</v-icon>
         </v-list-item-title>
       </v-list-item>
-      <v-list-item>
+      <v-list-item  @click="triggerPowerButton('power')">
         <v-list-item-title>{{ $t('menu.atx_poweroff') }} <v-icon>mdi-power-sleep</v-icon></v-list-item-title>
       </v-list-item>
-      <v-list-item>
+      <v-list-item  @click="triggerPowerButton('forcepower')">
         <v-list-item-title>{{ $t('menu.atx_forceoff') }} <v-icon>mdi-power-off</v-icon></v-list-item-title>
       </v-list-item>
-      <v-list-item>
+      <v-list-item  @click="triggerPowerButton('reboot')">
         <v-list-item-title>{{ $t('menu.atx_reset') }} <v-icon>mdi-refresh</v-icon></v-list-item-title>
       </v-list-item>
     </v-list>
@@ -59,21 +59,11 @@ const triggerPowerButton = async (button) => {
   try {
     const response = await http.post(`/atx/click?button=${button}`);
     console.log(response.data)
-    return response.data;
+    // return response.data;
   } catch (error) {
     console.error('Error during atx button trigger:', error);
   }
 };
-
-async function powerOn() {
-  try {
-    const result = await triggerPowerButton('power');
-    console.log('Power toggled:', result);
-    alert(JSON.stringify(result));
-  } catch (error) {
-    console.error('Failed to toggle power:', error);
-  }
-}
 
 </script>
 
