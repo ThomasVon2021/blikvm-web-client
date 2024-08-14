@@ -45,7 +45,8 @@ export const useAppStore = defineStore('app', {
     temperature: 0,
     startOcr: false,
     ocrSelection: false,
-    ocrLang: []
+    ocrLang: [],
+    tusPort: 10002,
   }),
   actions: {
     switchKeyboardStatus() {
