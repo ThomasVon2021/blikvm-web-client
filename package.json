@@ -30,6 +30,8 @@
     "webrtc-adapter": "^9.0.1"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.25.1",
+    "@babel/preset-env": "^7.25.3",
     "@vitejs/plugin-vue": "^5.0.4",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",
