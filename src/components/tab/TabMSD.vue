@@ -185,7 +185,6 @@
 import { ref, onMounted } from 'vue';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import http from '@/utils/http.js';
-import { useNotification } from '@/composables/notification.js';
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
 import { Dashboard } from '@uppy/vue';
@@ -200,7 +199,6 @@ const switches = ref([]);
 const dialogResize = ref(false);
 const dialogRemove = ref(false);
 const selectedItem = ref(null);
-const { createAndAddNotification } = useNotification();
 const selected = ref([]);
 const availableImage = ref(false);
 const sliders = ref([]);
@@ -400,29 +398,12 @@ const removeItemConfirm = async (item) => {
 
       if (response.data.code === 0) {
         // success
-
-        const messageType = 'Information';
-        const icon = 'mdi-information';
-        const target = '' // `${myTarget}`;
-        const message = `Successfully remove image ${item}`;
-        const text = '???';
-
-        createAndAddNotification('uuid', messageType, icon, message, target, text);
-
       } else {
         console.error('Error removing partition:', response);
       }
       await handleRefreshMSDListClick();
     } catch (error) {
       console.error(error);
-
-      const messageType = 'Error';
-      const icon = 'mdi-alert';
-      const target = '' // `${myTarget}`;
-      const message = `${error} Unable to remove partition.`;
-      const text = '???';
-
-      createAndAddNotification('uuid', messageType, icon, message, target, text);
     }
   };
 

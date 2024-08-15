@@ -161,6 +161,7 @@ function handleSensitivityChange(){
     padding: 5px;
     margin-right: 15px;
     transition: color 0.3s ease;
+    animation: blink-animation 1s infinite; 
 }
 
 .inactive-toolbar-btn {
@@ -170,5 +171,17 @@ function handleSensitivityChange(){
     padding: 5px;
     margin-right: 15px;
     transition: color 0.3s ease;
+}
+
+@keyframes blink-animation {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>

@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -23,82 +22,80 @@
 -->
 <template>
     <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+
         <template v-slot:activator="{ props }">
-            <v-btn icon class="toolbar-btn" size="30" v-bind="props">
-                <v-icon class="toolbar-icon" color="yellow">mdi-bell</v-icon>
+            <v-btn icon :class="{'active-toolbar-btn': newNotification, 'inactive-toolbar-btn': !newNotification}" size="30" v-bind="props" @click="markAsRead">
+                <v-icon class="toolbar-icon">mdi-bell</v-icon>
                 <v-tooltip activator="parent" location="bottom">Notification</v-tooltip>
             </v-btn>
         </template>
 
-        <v-card width="370" max-height="400" class="mx-auto notification-card" color="grey-lighten-3">
-            <v-expansion-panels variant="accordion">
-                <v-expansion-panel class="bli-font-bold my-2"
-                    v-for="(panel, index) in notificationStore.allNotifications" :key="index" @click.stop>
-                    <v-expansion-panel-title icon="mdi-vuetify" expand-icon="mdi-menu-down" collapse-icon="mdi-menu-up">
-                        <template v-slot:default="{ }">
-                            <v-row no-gutters>
-                                <v-col cols="4" class="align-center d-flex justify-start">
-                                    <v-icon class="me-1">{{ getContentIcon(panel.items) }}</v-icon>
-                                    {{ panel.title }}
-                                </v-col>
-                            </v-row>
-                        </template>
-                    </v-expansion-panel-title>
-                        <v-card v-for="(content, index) in panel.items" :key="index">
-                            <v-card-subtitle>{{ content.timestamp }}</v-card-subtitle>
-                            <v-card-title expand-icon="mdi-menu-down">{{ content.message }}</v-card-title>
+        <v-card max-width="100%" class="mx-auto" color="grey-lighten-3">
+
+            <v-card-title>Notifications</v-card-title>
+
+            <v-expansion-panels variant="accordion" v-model="expandedPanels">
+                <v-expansion-panel class="bli-font-bold" v-for="(panel, index) in notification" :key="index"
+                    :title="`${panel.title}(${panel.contents.length})`">
+                    <v-expansion-panel-text v-for="(content, index) in panel.contents" :key="index">
+                        <v-card>
+                            <v-card-subtitle>{{ content.subtitle }}</v-card-subtitle>
                             <v-card-text>{{ content.text }}</v-card-text>
                         </v-card>
+                    </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
         </v-card>
-
     </v-menu>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useNotificationStore } from '@/stores/notificationStore';
+import { ref } from 'vue';
+import { useAppStore } from '@/stores/stores';
+import { storeToRefs } from 'pinia';
 
+const store = useAppStore();
+const { newNotification, notification } = storeToRefs(store);
 
 const menu = ref(false);
-const notificationStore = useNotificationStore();
-const notifications = ref([]);
+const expandedPanels = ref([]);
 
-watch(() => notificationStore.allNotifications, (newNotifications) => {
-  // Update the local notifications array
-  notifications.value = newNotifications.map(notification => {
-    const itemCount = notification.items.length;
-    return {
-      ...notification,
-      title: `Storage (${itemCount})`
-    };
-  });
-});
-
-const getContentIcon = (items) => {
-  if (items.length > 0) {
-    return items[0].icon;
-  }
-  return ''
-}
-
-
-
-function cancel() {
-    menu.value = false;
-}
-
-function save() {
-    alert(`Absolute mode: ${model.value}, Enable tablet: ${tablet.value}`);
-    menu.value = false;
+function markAsRead() {
+    newNotification.value = false;
 }
 
 </script>
 
 <style scoped>
-.align-center {
-    display: flex;
-    align-items: center;
+
+.active-toolbar-btn {
+    color: #e7c608;
+    border: 2px solid #e7c608;
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+    animation: blink-animation 1s infinite; 
+}
+
+.inactive-toolbar-btn {
+    color:white;
+    border: 2px solid white;
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+@keyframes blink-animation {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>

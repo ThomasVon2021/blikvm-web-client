@@ -54,6 +54,10 @@ function handleWSMessage( event, store ){
       store.capturedFps = message.data.videoStatus.capturedFps;
       store.queuedFps = message.data.videoStatus.capturedFps;
     }
+    if( message.data.notification != null ){
+      store.notification = message.data.notification;
+      store.newNotification = message.data.newNotification;
+    }
 }
 
 function sendPing(ws){
