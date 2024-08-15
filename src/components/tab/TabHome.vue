@@ -1,5 +1,5 @@
-
-/*****************************************************************************
+<!--
+****************************************************************************
 #                                                                            #
 #    blikvm                                                                  #
 #                                                                            #
@@ -18,27 +18,33 @@
 #    You should have received a copy of the GNU General Public License       #
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
 #                                                                            #
-*****************************************************************************/
-/**
- *
- * project config settings file
- *
- */
-import project from '../package.json';
-/**
- * Change the IP address below to your development testing machine's IP address. In the official environment, this configuration is invalid
- */
-const dev_device_ip = '192.168.8.27';
-const dev_device_port = 10001;
+****************************************************************************
+-->
 
-const env = process.env.NODE_ENV;
+<template>
+    <v-menu>
+      <template v-slot:activator="{ props: menu }">
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props: tooltip }">
+            <v-btn icon class="toolbar-btn" size="30" v-bind="mergeProps(menu, tooltip)" @click="goMainPage">
+              <v-icon class="toolbar-icon">mdi-home</v-icon>
+            </v-btn>
+          </template>
+          <span>Home</span>
+        </v-tooltip>
+      </template>
+    </v-menu>
+  </template>
+  
+  <script setup>
+  import { mergeProps } from 'vue';
+  import { useRouter } from 'vue-router';
+  
+  const router = useRouter();
 
-const version = project.version;
-const build = project.build;
+  const goMainPage = () => {
+    router.push('/main');
+};
 
-export default {
-    version:version,
-    build:build,
-    host_ip : env === 'development' ? dev_device_ip : window.location.hostname,
-    host_port: env === 'development' ? dev_device_port : parseInt(window.location.port)
-}
+</script>
+  

@@ -111,7 +111,7 @@ const ocrTextFlag = ref(false);
 
 const mjpegUrl = ref(`http://${Config.host_ip}:${videoServerPort.value}/stream`);
 
-const ws = new WebSocket(`ws://${Config.host_ip}:10001`);
+const ws = new WebSocket(`ws://${Config.host_ip}:${Config.host_port}/wss`);
 
 ws.addEventListener('open', () => {
   console.log('WebSocket connection established');

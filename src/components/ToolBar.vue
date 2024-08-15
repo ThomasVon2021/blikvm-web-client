@@ -41,7 +41,8 @@
             <TabATX />
             <TabLanguage />
             <TabUser/>
-            
+            <TabWebTerminal />
+            <TabHome />
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
                 <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? 'FullScreen-Exit' : 'FullScreen'
