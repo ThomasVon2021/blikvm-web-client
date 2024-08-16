@@ -45,7 +45,7 @@ const languageDD = shallowRef([
       </v-tooltip>
       
     </template>
-    <v-list class="dropdown-menu">
+    <v-list class="dropdown-menu" @mouseenter.stop @mousemove.stop>
       <v-list-item
       v-for="(item, index) in languageDD"
       :key="index"

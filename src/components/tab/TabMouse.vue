@@ -29,7 +29,7 @@
                 <v-tooltip activator="parent" location="bottom">Mouse</v-tooltip>
             </v-btn>
         </template>
-        <UiParentCard title="Mouse setting">
+        <UiParentCard title="Mouse setting" @mouseenter.stop @mousemove.stop>
             <div class="d-flex align-center">
                 <v-label class="font-weight-medium align-center">mode</v-label>
                 <v-radio-group v-model="absoluteMode" inline class="ml-3 align-center" @change="changeMode">

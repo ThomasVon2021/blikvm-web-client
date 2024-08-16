@@ -58,6 +58,11 @@ function handleWSMessage( event, store ){
       store.notification = message.data.notification;
       store.newNotification = message.data.newNotification;
     }
+    if( message.data.alert != null ){
+      store.alert = message.data.alert;
+      store.newAlert = true;
+      console.log(store.alert,  store.newAlert);
+    }
 }
 
 function sendPing(ws){

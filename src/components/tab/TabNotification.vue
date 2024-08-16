@@ -30,7 +30,7 @@
             </v-btn>
         </template>
 
-        <v-card max-width="100%" class="mx-auto" color="grey-lighten-3">
+        <v-card max-width="100%" class="mx-auto" color="grey-lighten-3" @mouseenter.stop @mousemove.stop>
 
             <v-card-title>Notifications</v-card-title>
 

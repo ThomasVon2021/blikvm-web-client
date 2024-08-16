@@ -22,38 +22,55 @@
 ****************************************************************************
 -->
 <template>
-  <v-menu>
-    <template v-slot:activator="{ props: menu }">
-      <v-tooltip location="top">
-        <template v-slot:activator="{ props: tooltip }">
-          <v-btn icon class="toolbar-btn" size="30" v-bind="mergeProps(menu, tooltip)">
-            <v-icon class="toolbar-icon">mdi-power</v-icon>
-          </v-btn>
-        </template>
-        <span>ATX</span>
-      </v-tooltip>
+  <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+
+    <template v-slot:activator="{ props }">
+      <v-btn icon class="toolbar-btn" size="30" v-bind="props">
+        <v-icon class="toolbar-icon">mdi-power</v-icon>
+        <v-tooltip activator="parent" location="bottom">ATX</v-tooltip>
+      </v-btn>
     </template>
-    <v-list class="dropdown-menu" @mouseenter.stop @mousemove.stop>
-      <v-list-item @click="triggerPowerButton('power')">
-        <v-list-item-title>{{ $t('menu.atx_poweron') }} <v-icon>mdi-power</v-icon>
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item  @click="triggerPowerButton('power')">
-        <v-list-item-title>{{ $t('menu.atx_poweroff') }} <v-icon>mdi-power-sleep</v-icon></v-list-item-title>
-      </v-list-item>
-      <v-list-item  @click="triggerPowerButton('forcepower')">
-        <v-list-item-title>{{ $t('menu.atx_forceoff') }} <v-icon>mdi-power-off</v-icon></v-list-item-title>
-      </v-list-item>
-      <v-list-item  @click="triggerPowerButton('reboot')">
-        <v-list-item-title>{{ $t('menu.atx_reset') }} <v-icon>mdi-refresh</v-icon></v-list-item-title>
-      </v-list-item>
-    </v-list>
+
+    <UiParentCard title="Power Manager" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+      <v-row>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-btn @click="triggerPowerButton('power')" append-icon="mdi-power" color="primary">
+            {{ $t('menu.atx_poweron') }} 
+          </v-btn>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-btn @click="triggerPowerButton('power')" append-icon="mdi-power-sleep" color="primary">
+            {{ $t('menu.atx_poweroff') }} 
+          </v-btn>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-btn  @click="triggerPowerButton('forcepower')" append-icon="mdi-power-off" color="primary">
+            {{ $t('menu.atx_forceoff') }} 
+          </v-btn>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-btn @click="triggerPowerButton('reboot')" append-icon="mdi-refresh" color="primary">
+            {{ $t('menu.atx_reset') }} 
+          </v-btn>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-text-field v-model="macAddress" label="MAC Address" outlined></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" class="text-center align-center" >
+          <v-btn color="primary" @click="wakeOnLan">Wake on Lan</v-btn>
+        </v-col>
+      </v-row>
+    </UiParentCard>
+
   </v-menu>
 </template>
 
 <script setup>
-import { mergeProps } from 'vue'
 import http from '@/utils/http.js';
+import UiParentCard from '@/components/shared/UiParentCard.vue';
+
+const menu = ref(false);
+const macAddress = ref('');
 
 const triggerPowerButton = async (button) => {
   try {
@@ -65,21 +82,22 @@ const triggerPowerButton = async (button) => {
   }
 };
 
+const wakeOnLan = async () => {
+  try {
+    const response = await http.post(`/wol?mac=${macAddress.value}`);
+    console.log(response.data)
+    // return response.data;
+  } catch (error) {
+    console.error('Error during wake on lan:', error);
+  }
+};
+
 </script>
 
 <style scoped>
-.dropdown-menu {
-  background-color: #fff;
-  border: 2px solid white;
-  border-radius: 5px;
-}
-
-.dropdown-menu .v-list-item {
-  color: #333;
-  cursor: pointer;
-}
-
-.dropdown-menu .v-list-item:hover {
-  background-color: #f0f0f0;
+.align-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

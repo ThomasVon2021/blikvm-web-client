@@ -29,7 +29,7 @@
         <v-tooltip activator="parent" location="bottom">Video</v-tooltip>
       </v-btn>
     </template>
-    <UiParentCard title="video setting">
+    <UiParentCard title="video setting" @mouseenter.stop @mousemove.stop>
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">video mode</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">

@@ -29,7 +29,7 @@
         <v-tooltip activator="parent" location="bottom">switch</v-tooltip>
       </v-btn>
     </template>
-    <UiParentCard title="kvm switch">
+    <UiParentCard title="kvm switch" @mouseenter.stop @mousemove.stop>
 
       <v-row>
 

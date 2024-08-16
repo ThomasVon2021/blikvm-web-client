@@ -34,7 +34,7 @@
         </v-tooltip>
       </template>
   
-      <div class="pa-4">
+      <div class="pa-4" @mouseenter.stop @mousemove.stop>
         <v-list class="mt-3">
           <v-list-item @click="openSettingsDialog" color="secondary" rounded="md">
             <template v-slot:prepend>

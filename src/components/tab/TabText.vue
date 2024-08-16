@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -30,18 +29,11 @@
       </v-btn>
     </template>
 
-    <UiParentCard title="copy and paste">
-        
-        <v-row>
-        <v-textarea
-                filled
-                auto-grow
-                label="Paste to target"
-                variant="outlined"
-                rows="4"
-                color="primary"
-                v-model="pasteValue"
-        ></v-textarea>
+    <UiParentCard title="copy and paste" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+
+      <v-row>
+        <v-textarea filled auto-grow label="Paste to target" variant="outlined" rows="4" color="primary"
+          v-model="pasteValue"></v-textarea>
       </v-row>
       <v-row align="center">
         <v-col cols="auto">
@@ -96,7 +88,7 @@ function startSelection() {
   store.ocrLang = langType.value;
 }
 
-async function pasteToTarget(){
+async function pasteToTarget() {
   try {
 
     const response = await http.post('/hid/paste', pasteValue.value, {

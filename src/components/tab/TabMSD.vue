@@ -29,7 +29,7 @@
       </v-btn>
     </template>
 
-    <UiParentCard title="Mass Storage Devices">
+    <UiParentCard title="Mass Storage Devices" @mouseenter.stop @mousemove.stop>
 
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">status: </v-label>

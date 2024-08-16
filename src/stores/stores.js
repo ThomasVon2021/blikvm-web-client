@@ -49,6 +49,8 @@ export const useAppStore = defineStore('app', {
     tusPort: 10002,
     notification: '',
     newNotification: false,
+    alert: '',
+    newAlert: false,
   }),
   actions: {
     switchKeyboardStatus() {
