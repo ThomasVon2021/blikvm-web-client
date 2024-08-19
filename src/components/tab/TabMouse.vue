@@ -51,6 +51,10 @@
                 <v-label class="font-weight-medium mr-3">{{ hidSoftLabel }}</v-label>
                 <v-switch color="primary" v-model="hidEnable" hide-details @change="toggleHid"></v-switch>
             </div>
+            <div class="d-flex align-center switch-container">
+                <v-label class="font-weight-medium mr-3">{{ jigglerLabel }}</v-label>
+                <v-switch color="primary" v-model="mouseJiggler" hide-details @change="toggleJiggler"></v-switch>
+            </div>
 
             <v-dialog v-model="changeModeReboot">
             <v-card>
@@ -77,12 +81,11 @@ import { storeToRefs } from 'pinia';
 import { RateLimitedMouse } from '../../utils/mouse.js';
 
 const menu = ref(false);
-const model = ref(false);
-const tablet = ref(true);
 const slider_sensitivity = ref(1.0);
 const store = useAppStore();
-const { mouseStatus, hidEnable, absoluteMode } = storeToRefs(store);
+const { mouseStatus, hidEnable, absoluteMode, mouseJiggler } = storeToRefs(store);
 const hidSoftLabel = computed(() => (hidEnable.value ? 'soft hid enable' : 'soft hid disable'));
+const jigglerLabel = computed(() => (mouseJiggler.value ? 'mouse jiggler enable' : 'mouse jiggler disable'));
 const changeModeReboot = ref(false);
 const changeModeMessage = ref('change mouse mode success, you need reboot the kvm and your target pc now!');
 
@@ -99,6 +102,7 @@ async function reboot(){
     console.error('reboot error:', error);
   }
 }
+
 async function toggleHid(){
   try {
     const actionValue = hidEnable.value ? 'enable' : 'disable';
@@ -110,6 +114,20 @@ async function toggleHid(){
     }
   } catch (error) {
     console.error('Error during atx button trigger:', error);
+  }
+}
+
+async function toggleJiggler(){
+  try {
+    const actionValue = mouseJiggler.value ? 'true' : 'false';
+    const response = await http.post(`/mouse/jiggler?action=${actionValue}`);
+    if( response.status === 200 && response.data.code === 0){
+        console.log(`mouse jiggler ${actionValue} success`);
+    }else{
+        console.log(`mouse jiggler ${actionValue} error`);
+    }
+  } catch (error) {
+    console.error('Error during mouse jiggler trigger:', error);
   }
 }
 

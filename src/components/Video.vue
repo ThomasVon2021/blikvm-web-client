@@ -21,12 +21,14 @@
 ****************************************************************************
 -->
 <template>
-  <div id="kvm" class="kvm-area" @click="requestPointerLock">
+  <div id="kvm" class="kvm-area" @click="requestPointerLock" >
     <img id="image" draggable="false" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
-      @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" />
+      @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" @mouseleave="onMouseLeave"
+      @mouseenter="onMouseEnter" />
     <video draggable="false" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel"
-      @contextmenu="handleContextMenu"></video>
+      @contextmenu="handleContextMenu"       @mouseleave="onMouseLeave"
+      @mouseenter="onMouseEnter"></video>
 
     <TabKeyboard v-if="store.isKeyboardOpen" :input="inputKey" @onKeyPress="handleKeyPress"
       @onKeyReleased="handleKeyReleased" />
@@ -108,6 +110,7 @@ const realSelection = ref({ left: 0, right: 0, width: 0, height: 0 });
 const ocrDialog = ref(false);
 const ocrText = ref('');
 const ocrTextFlag = ref(false);
+const isMouseInside = ref(false);
 
 const mjpegUrl = ref(`http://${Config.host_ip}:${videoServerPort.value}/stream`);
 
@@ -128,6 +131,14 @@ ws.addEventListener('close', () => {
 ws.addEventListener('error', (error) => {
   console.error('WebSocket error:', error);
 });
+
+function onMouseEnter() {
+  isMouseInside.value = true;
+}
+
+function onMouseLeave() {
+  isMouseInside.value = false;
+}
 
 const handleKeyPress = (button) => {
   const keyCode = keytoCode(button);
@@ -162,6 +173,9 @@ const selectionStyle = computed(() => ({
 let rateLimitedMouse = null;
 
 const handleMouseMove = (event) => {
+  if (!isMouseInside.value){
+    return;
+  }
   event.preventDefault();
 
   if (ocrSelection.value === true && isSelecting === true) {
@@ -188,6 +202,9 @@ const handleMouseMove = (event) => {
 };
 
 const handleMouseDown = (event) => {
+  if (!isMouseInside.value){
+    return;
+  }
   event.preventDefault();
 
   if (ocrSelection.value === true) {
@@ -217,6 +234,9 @@ const handleMouseDown = (event) => {
 };
 
 const handleMouseUp = (event) => {
+  if (!isMouseInside.value){
+    return;
+  }
   if (ocrSelection.value === true && isSelecting === true) {
     isSelecting = false;
     ocrSelection.value = false;
@@ -230,6 +250,9 @@ const handleMouseUp = (event) => {
 };
 
 const handleWheel = (event) => {
+  if (!isMouseInside.value){
+    return;
+  }
   event.preventDefault();
   if (rateLimitedMouse != null) {
     rateLimitedMouse.onWheel(event);

@@ -37,6 +37,7 @@ function handleWSMessage( event, store ){
         RateLimitedMouse.setMode(store.absoluteMode);
       }
       store.hidEnable = message.data.hidStatus.enable;
+      store.mouseJiggler = message.data.hidStatus.mouseJiggler;
     }
     if( message.data.pong != null){
       let timestamp=new Date().getTime();

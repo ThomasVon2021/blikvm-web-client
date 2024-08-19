@@ -22,11 +22,19 @@
 ****************************************************************************
 -->
 <template>
-  <ToolBar />
-  <Alert />
+  <div @mouseenter.stop @mousemove.stop>
+    <ToolBar />
+    <Alert/>
+  </div>
   <Video />
 </template>
 
 <script setup>
-  //
+
 </script>
+
+<style>
+
+</style>
+
+
