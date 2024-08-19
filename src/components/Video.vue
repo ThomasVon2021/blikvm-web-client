@@ -173,7 +173,8 @@ const selectionStyle = computed(() => ({
 let rateLimitedMouse = null;
 
 const handleMouseMove = (event) => {
-  if (!isMouseInside.value){
+
+  if (absoluteMode.value !== false && !isMouseInside.value){
     return;
   }
   event.preventDefault();
@@ -202,7 +203,7 @@ const handleMouseMove = (event) => {
 };
 
 const handleMouseDown = (event) => {
-  if (!isMouseInside.value){
+  if (absoluteMode.value !== false && !isMouseInside.value){
     return;
   }
   event.preventDefault();
@@ -234,7 +235,7 @@ const handleMouseDown = (event) => {
 };
 
 const handleMouseUp = (event) => {
-  if (!isMouseInside.value){
+  if (absoluteMode.value !== false && !isMouseInside.value){
     return;
   }
   if (ocrSelection.value === true && isSelecting === true) {
@@ -250,7 +251,7 @@ const handleMouseUp = (event) => {
 };
 
 const handleWheel = (event) => {
-  if (!isMouseInside.value){
+  if (absoluteMode.value !== false && !isMouseInside.value){
     return;
   }
   event.preventDefault();
