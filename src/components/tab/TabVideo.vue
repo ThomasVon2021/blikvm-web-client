@@ -118,6 +118,10 @@ const slider_h264_gop = ref(30);
 const resetDialog = ref(false);
 const resetResultText = ref('');
 
+watch(videoMode, (newMode) => {
+  localStorage.setItem('videoMode', newMode);
+});
+
 async function fetchVideoConfig() {
   try {
     const response = await http.post('/video/config?action=get')
@@ -178,6 +182,10 @@ function save() {
 }
 
 onMounted(() => {
+  const savedVideoMode = localStorage.getItem('videoMode');
+  if (savedVideoMode) {
+    videoMode.value = savedVideoMode;
+  }
   fetchVideoConfig();
 });
 
