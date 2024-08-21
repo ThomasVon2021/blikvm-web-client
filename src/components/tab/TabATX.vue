@@ -27,37 +27,37 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-power</v-icon>
-        <v-tooltip activator="parent" location="bottom">ATX</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.atx.tip') }} </v-tooltip>
       </v-btn>
     </template>
 
-    <UiParentCard title="Power Manager" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+    <UiParentCard  :title="$t('tab.atx.title')" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
       <v-row>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-btn @click="triggerPowerButton('power')" append-icon="mdi-power" color="primary">
-            {{ $t('menu.atx_poweron') }} 
+            {{ $t('tab.atx.atx_poweron') }} 
           </v-btn>
         </v-col>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-btn @click="triggerPowerButton('power')" append-icon="mdi-power-sleep" color="primary">
-            {{ $t('menu.atx_poweroff') }} 
+            {{ $t('tab.atx.atx_poweroff') }} 
           </v-btn>
         </v-col>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-btn  @click="triggerPowerButton('forcepower')" append-icon="mdi-power-off" color="primary">
-            {{ $t('menu.atx_forceoff') }} 
+            {{ $t('tab.atx.atx_forceoff') }} 
           </v-btn>
         </v-col>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-btn @click="triggerPowerButton('reboot')" append-icon="mdi-refresh" color="primary">
-            {{ $t('menu.atx_reset') }} 
+            {{ $t('tab.atx.atx_reset') }} 
           </v-btn>
         </v-col>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-text-field v-model="macAddress" label="MAC Address" outlined></v-text-field>
         </v-col>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
-          <v-btn color="primary" @click="wakeOnLan">Wake on Lan</v-btn>
+          <v-btn color="primary" @click="wakeOnLan">{{ $t('tab.atx.wake_on_lan') }} </v-btn>
         </v-col>
       </v-row>
     </UiParentCard>

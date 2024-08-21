@@ -34,29 +34,31 @@
                     <v-row justify="center">
                         <v-col cols="12" sm="8" md="6" lg="4">
                             <v-card class="pa-12 pb-8" elevation="8" rounded="lg">
-                                <div class="text-subtitle-1 text-medium-emphasis">{{ $t('username') }}</div>
+                                <div class="text-subtitle-1 text-medium-emphasis">{{ $t('login.username') }}</div>
     
-                                <v-text-field v-model="user" density="compact" :placeholder="$t('username')"
-                                    prepend-inner-icon="mdi-email-outline" variant="outlined" @keyup.enter="handleLoginClick"></v-text-field>
+                                <v-text-field v-model="user" density="compact" :placeholder="$t('login.username_placeholder')"
+                                    prepend-inner-icon="mdi-email-outline" variant="outlined" @keyup.enter="handleLoginClick"
+                                    @input="clearErrorMessage"></v-text-field>
     
                                 <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-                                    {{ $t('password') }}
+                                    {{ $t('login.password') }}
                                 </div>
     
                                 <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                                    :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('enterPassword')"
+                                    :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('login.password_placeholder')"
                                     prepend-inner-icon="mdi-lock-outline" variant="outlined"
-                                    @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"></v-text-field>
+                                    @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"
+                                    @input="clearErrorMessage"></v-text-field>
     
                                 <v-card v-if="errorMessage" class="mb-12" color="surface-variant" variant="tonal">
                                     <v-card-text class="text-medium-emphasis text-caption">
-                                        {{ $t('warning') }}:<div class="warning">{{ errorMessage }}</div>
+                                        {{ $t('label.warning') }}:<div class="warning">{{ errorMessage }}</div>
                                     </v-card-text>
                                 </v-card>
     
                                 <v-btn :loading="validating" block class="mb-8" color="blue" size="large" variant="tonal"
                                     @click="handleLoginClick">
-                                    {{ $t('login') }}
+                                    {{ $t('login.login') }}
                                 </v-btn>
                             </v-card>
                         </v-col>
@@ -81,7 +83,7 @@ const validating = shallowRef(false);
 const errorMessage = ref('');
 const user = ref(null);
 const password = ref(null);
-
+const { proxy } = getCurrentInstance();
 const store = useAppStore();
 
 const handleLoginClick = async () => {
@@ -110,21 +112,28 @@ const handleLoginClick = async () => {
             // Handle failed authentication
             console.log('Login failed. Please check your credentials:',response.data);
             // Optionally, set an error message for the user
-            errorMessage.value = 'Login failed. Please check your credentials.';
+            errorMessage.value = proxy.$t('login.login_fail');
         }
     } catch (error) {
         // Handle any errors that occurred during authentication
         console.error('An error occurred during authentication:', error);
-        errorMessage.value = 'An error occurred during authentication. Please try again.';
         validating.value = false; // Reset the loading state
     } finally {
         validating.value = false;
     }
 };
 
+const clearErrorMessage = () => {
+  errorMessage.value = '';
+};
+
 // Lifecycle hook: onMounted
 onMounted(() => {
     console.log('LoginPage mounted');
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedLanguage) {
+        proxy.$i18n.locale = savedLanguage;
+    }
 });
 </script>
   

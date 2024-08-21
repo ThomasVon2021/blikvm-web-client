@@ -30,7 +30,7 @@
               <v-icon class="toolbar-icon">mdi-console</v-icon>
             </v-btn>
           </template>
-          <span>terminal</span>
+          <span>{{ $t('tab.terminal') }}</span>
         </v-tooltip>
       </template>
     </v-menu>

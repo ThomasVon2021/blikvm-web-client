@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -26,12 +25,12 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-video</v-icon>
-        <v-tooltip activator="parent" location="bottom">Video</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.video.tip') }}</v-tooltip>
       </v-btn>
     </template>
-    <UiParentCard title="video setting" @mouseenter.stop @mousemove.stop>
+    <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
       <div class="d-flex align-center">
-        <v-label class="font-weight-medium align-center">video mode</v-label>
+        <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
           <v-radio label="h264" color="primary" value="h264"></v-radio>
@@ -39,7 +38,7 @@
       </div>
 
       <div class="d-flex ga-4 align-center flex-row">
-        <v-label class="text-subtitlte-1">FPS</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.fps') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="slider_fps" min="1" max="60" color="primary" step="1" hide-details>
           <template v-slot:append>
             <v-text-field variant="plain" v-model="slider_fps"></v-text-field>
@@ -48,7 +47,7 @@
       </div>
 
       <div v-if="videoMode === 'mjpeg'" class="d-flex align-center">
-        <v-label class="text-subtitlte-1">Quality</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.quality') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" color="primary" step="10" show-ticks="always"
           hide-details>
           <template v-slot:append>
@@ -58,7 +57,7 @@
       </div>
 
       <div v-if="videoMode === 'h264'" class="d-flex align-center">
-        <v-label class="text-subtitlte-1">Mbps</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.Mbps') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="slider_h264_mbps" min="0.1" max="10" color="primary" step="0.1"
           hide-details>
           <template v-slot:append>
@@ -68,7 +67,7 @@
       </div>
 
       <div v-if="videoMode === 'h264'" class="d-flex ga-4 align-center flex-row">
-        <v-label class="text-subtitlte-1">gop</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.gop') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="slider_h264_gop" min="1" max="60" color="primary" step="1"
           hide-details>
           <template v-slot:append>
@@ -79,9 +78,9 @@
 
       <div class="d-flex ga-4 align-center flex-column flex-wrap flex-xl-nowrap flex-sm-row fill-height">
         
-        <v-label class="text-subtitlte-1">Reset takes effect</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.reset_take_effect') }}</v-label>
         <v-btn key="primary" color="primary" @click="resetStream">
-          reset stream
+          {{ $t('tab.video.reset_stream') }}
         </v-btn>
 
         <v-dialog v-model="resetDialog">
@@ -90,7 +89,7 @@
               {{ resetResultText }}
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" block @click="resetDialog = false">Close</v-btn>
+              <v-btn color="primary" block @click="resetDialog = false">{{ $t('common.close') }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>

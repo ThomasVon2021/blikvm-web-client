@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -26,15 +25,15 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-video-switch</v-icon>
-        <v-tooltip activator="parent" location="bottom">switch</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.switch.tip') }}</v-tooltip>
       </v-btn>
     </template>
-    <UiParentCard title="kvm switch" @mouseenter.stop @mousemove.stop>
+    <UiParentCard :title="$t('tab.switch.tip')" @mouseenter.stop @mousemove.stop>
 
       <v-row>
 
         <v-col cols="12" sm="6" md="4" class="text-center align-center">
-          <v-switch color="primary" v-model="switchEnabled" :label="switchLabel" hide-details
+          <v-switch color="primary" v-model="switchEnabled"  :label="switchEnabled ? $t('label.enable') : $t('label.disable')"  hide-details
             @change="toggleSwitch"></v-switch>
           <v-dialog v-model="availableSwitch">
             <v-card>
@@ -42,19 +41,19 @@
                 {{ switchEnabledResultText }}
               </v-card-text>
               <v-card-actions>
-                <v-btn color="primary" block @click="availableSwitch = false">Close</v-btn>
+                <v-btn color="primary" block @click="availableSwitch = false">{{ $t('button.close') }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <v-autocomplete label="Choose a model" class="ml-3" v-model="switchValue" :items="switchModles"
+          <v-autocomplete :label="$t('tab.switch.choose_a_model')" class="ml-3" v-model="switchValue" :items="switchModles"
             color="primary" variant="filled" hide-details @update:modelValue="changeSwitchModle"></v-autocomplete>
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <v-autocomplete label="Choose a Channel" class="ml-3 flex-grow-1" v-model="channelValue" :items="channelItems"
+          <v-autocomplete :label="$t('tab.switch.choose_a_channel')" class="ml-3 flex-grow-1" v-model="channelValue" :items="channelItems"
             color="primary" variant="filled" hide-details @update:modelValue="changeSwitchChannel"></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-center align-center">
@@ -62,7 +61,7 @@
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-center align-center">
           <v-btn @click="fetchSwitchConfig" append-icon="mdi-refresh" :ripple="true" color="primary">
-            <v-tooltip>{{ $t('refreshList') }}</v-tooltip>
+            {{ $t('common.refresh') }}
           </v-btn>
         </v-col>
 
@@ -71,17 +70,17 @@
           <div class="text-center">
             <v-dialog v-model="dialog" persistent @keydown.stop @keyup.stop>
               <template v-slot:activator="{ props }">
-                <v-btn color="primary" v-bind="props"> Switch Config </v-btn>
+                <v-btn color="primary" v-bind="props"> {{ $t('tab.switch.config') }} </v-btn>
               </template>
               <v-card style="height: 300px" class="overflow-auto">
                 <v-card-title class="pa-5">
-                  <span class="text-h5">Switch Config</span>
+                  <span class="text-h5">{{ $t('tab.switch.config') }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12">
-                        <v-text-field v-model="devicePath" label="device path" required rounded="0"> </v-text-field>
+                        <v-text-field v-model="devicePath" :label="$t('common.device_path')" required rounded="0"> </v-text-field>
                       </v-col>
 
                       <v-col v-for="(item, index) in channelItems" :key="index" cols="12" sm="6" md="4">
@@ -93,8 +92,8 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="error" variant="text" @click="close"> Close </v-btn>
-                  <v-btn color="success" variant="text" @click="save"> Save </v-btn>
+                  <v-btn color="error" variant="text" @click="close"> {{ $t('button.close') }} </v-btn>
+                  <v-btn color="success" variant="text" @click="save"> {{ $t('button.save') }} </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>

@@ -35,7 +35,7 @@
             <TabText />
             <v-btn icon :class="{'active-toolbar-btn': keyboardStatus, 'inactive-toolbar-btn': !keyboardStatus}" size="30" @click="store.switchKeyboardStatus">
                 <v-icon class="toolbar-icon">mdi-keyboard</v-icon>
-                <v-tooltip activator="parent" location="bottom">Keyboard</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('tab.keyboard') }}</v-tooltip>
             </v-btn>
             <TabMouse />
             <TabATX />
@@ -45,13 +45,13 @@
             <TabHome />
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
-                <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? 'FullScreen-Exit' : 'FullScreen'
-                    }}</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? $t('tab.full_screen_exit') : $t('tab.full_screen')
+                }}</v-tooltip>
             </v-btn>
             
             <v-btn icon @click="hideAppBar()" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">mdi-chevron-up</v-icon>
-                <v-tooltip activator="parent" location="bottom">Hide</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('tab.hide') }}</v-tooltip>
             </v-btn>
             
         </div>

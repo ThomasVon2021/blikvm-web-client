@@ -26,13 +26,13 @@
         <template v-slot:activator="{ props }">
             <v-btn icon :class="{'active-toolbar-btn': newNotification, 'inactive-toolbar-btn': !newNotification}" size="30" v-bind="props" @click="markAsRead">
                 <v-icon class="toolbar-icon">mdi-bell</v-icon>
-                <v-tooltip activator="parent" location="bottom">Notification</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('tab.notification') }}</v-tooltip>
             </v-btn>
         </template>
 
         <v-card max-width="100%" class="mx-auto" color="grey-lighten-3" @mouseenter.stop @mousemove.stop>
 
-            <v-card-title>Notifications</v-card-title>
+            <v-card-title>{{ $t('tab.notification') }}</v-card-title>
 
             <v-expansion-panels variant="accordion" v-model="expandedPanels">
                 <v-expansion-panel class="bli-font-bold" v-for="(panel, index) in notification" :key="index"

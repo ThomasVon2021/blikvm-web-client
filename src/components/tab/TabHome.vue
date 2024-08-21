@@ -30,7 +30,7 @@
               <v-icon class="toolbar-icon">mdi-home</v-icon>
             </v-btn>
           </template>
-          <span>Home</span>
+          <span>{{ $t('tab.home') }}</span>
         </v-tooltip>
       </template>
     </v-menu>

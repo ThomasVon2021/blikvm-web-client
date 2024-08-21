@@ -25,45 +25,45 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-content-copy</v-icon>
-        <v-tooltip activator="parent" location="bottom">Text</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.text.tip') }}</v-tooltip>
       </v-btn>
     </template>
 
-    <UiParentCard title="copy and paste" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+    <UiParentCard :title="$t('tab.text.title')" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
 
       <v-row>
-        <v-textarea filled auto-grow label="Paste to target" variant="outlined" rows="4" color="primary"
+        <v-textarea filled auto-grow :label="$t('tab.text.paste')" variant="outlined" rows="4" color="primary"
           v-model="pasteValue"></v-textarea>
       </v-row>
       <v-row align="center">
         <v-col cols="auto">
           <v-btn color="primary" @click="pasteToTarget">
-            Paste
+            {{ $t('tab.text.paste_button') }}
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <v-label class="font-weight-medium align-center">Only support eng</v-label>
+          <v-label class="font-weight-medium align-center">{{ $t('tab.text.paste_info') }}</v-label>
         </v-col>
       </v-row>
       <v-row>
-        <v-label class="font-weight-medium align-center">Copy by text recognition</v-label>
+        <v-label class="font-weight-medium align-center">{{ $t('tab.text.copy') }}</v-label>
         <v-progress-circular :indeterminate="startOcr" color="success"> </v-progress-circular>
       </v-row>
       <v-row align="center">
         <v-col cols="auto">
           <v-btn color="primary" @click="startSelection">
-            Select area
+            {{ $t('tab.text.select_area') }}
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <span> for </span>
+          <span> {{ $t('tab.text.for') }} </span>
         </v-col>
         <v-col cols="auto">
           <v-autocomplete class="ml-3 flex-grow-1" v-model="langType" :items="languageOptions" color="primary"
             variant="filled" hide-details></v-autocomplete>
         </v-col>
         <v-col cols="auto">
-          <span>text recognition</span>
+          <span>{{ $t('tab.text.text_recognition') }}</span>
         </v-col>
       </v-row>
     </UiParentCard>

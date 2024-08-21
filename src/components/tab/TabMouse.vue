@@ -26,15 +26,15 @@
         <template v-slot:activator="{ props }">
             <v-btn icon :class="{'active-toolbar-btn': mouseStatus, 'inactive-toolbar-btn': !mouseStatus}" size="30" v-bind="props">
                 <v-icon class="toolbar-icon">mdi-mouse</v-icon>
-                <v-tooltip activator="parent" location="bottom">Mouse</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('tab.mouse.tip') }}</v-tooltip>
             </v-btn>
         </template>
-        <UiParentCard title="Mouse setting" @mouseenter.stop @mousemove.stop>
+        <UiParentCard :title="$t('tab.mouse.title')" @mouseenter.stop @mousemove.stop>
             <div class="d-flex align-center">
-                <v-label class="font-weight-medium align-center">mode</v-label>
+                <v-label class="font-weight-medium align-center"> {{ $t('tab.mouse.mode') }} </v-label>
                 <v-radio-group v-model="absoluteMode" inline class="ml-3 align-center" @change="changeMode">
-                    <v-radio label="Absolute" color="primary" :value='true'></v-radio>
-                    <v-radio label="Relative" color="primary" :value='false'></v-radio>
+                    <v-radio :label="$t('tab.mouse.absolute')" color="primary" :value='true'></v-radio>
+                    <v-radio :label="$t('tab.mouse.relative')" color="primary" :value='false'></v-radio>
                 </v-radio-group>
             </div>
 
@@ -48,22 +48,26 @@
                 </v-slider>
             </div>
             <div class="d-flex align-center switch-container">
-                <v-label class="font-weight-medium mr-3">{{ hidSoftLabel }}</v-label>
+                <v-label class="font-weight-medium mr-3">
+                  {{ hidEnable ? $t('tab.mouse.soft_hid_enable') : $t('tab.mouse.soft_hid_disable') }}
+                </v-label>
                 <v-switch color="primary" v-model="hidEnable" hide-details @change="toggleHid"></v-switch>
             </div>
             <div class="d-flex align-center switch-container">
-                <v-label class="font-weight-medium mr-3">{{ jigglerLabel }}</v-label>
+                <v-label class="font-weight-medium mr-3">
+                  {{ mouseJiggler ? $t('tab.mouse.jiggler_enable') : $t('tab.mouse.jiggler_disable') }}
+                </v-label>
                 <v-switch color="primary" v-model="mouseJiggler" hide-details @change="toggleJiggler"></v-switch>
             </div>
 
             <v-dialog v-model="changeModeReboot">
             <v-card>
               <v-card-text>
-                {{ changeModeMessage }}
+                {{ $t('tab.mouse.change_mode') }}
               </v-card-text>
               <v-card-actions>
-                <v-btn color="success" variant="text" @click="reboot">Reboot</v-btn>
-                <v-btn color="primary" variant="text" @click="changeModeReboot = false">Later</v-btn>
+                <v-btn color="success" variant="text" @click="reboot">{{ $t('button.reboot') }}</v-btn>
+                <v-btn color="primary" variant="text" @click="changeModeReboot = false">{{ $t('button.later') }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -84,11 +88,7 @@ const menu = ref(false);
 const slider_sensitivity = ref(1.0);
 const store = useAppStore();
 const { mouseStatus, hidEnable, absoluteMode, mouseJiggler } = storeToRefs(store);
-const hidSoftLabel = computed(() => (hidEnable.value ? 'soft hid enable' : 'soft hid disable'));
-const jigglerLabel = computed(() => (mouseJiggler.value ? 'mouse jiggler enable' : 'mouse jiggler disable'));
 const changeModeReboot = ref(false);
-const changeModeMessage = ref('change mouse mode success, you need reboot the kvm and your target pc now!');
-
 
 async function reboot(){
     try {

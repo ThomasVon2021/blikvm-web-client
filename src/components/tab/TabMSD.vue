@@ -25,65 +25,23 @@
     <template v-slot:activator="{ props }">
       <v-btn icon class="toolbar-btn" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-folder-cog</v-icon>
-        <v-tooltip activator="parent" location="bottom">MSD</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.msd.tip') }}</v-tooltip>
       </v-btn>
     </template>
 
-    <UiParentCard title="Mass Storage Devices" @mouseenter.stop @mousemove.stop>
+    <UiParentCard :title="$t('tab.msd.title')" @mouseenter.stop @mousemove.stop>
 
       <div class="d-flex align-center">
-        <v-label class="font-weight-medium align-center">status: </v-label>
-        <v-chip :color="imageCreateStateColor" class="ma-2">{{ imageCreateStateText }}</v-chip>
-        <v-chip :color="imageConnectStateColor" class="ma-2">{{ imageConnectStateText }}</v-chip>
+        <v-label class="font-weight-medium align-center">{{ $t('label.status') }}: </v-label>
+        <v-chip :color="imageCreateStateColor" class="ma-2">
+          {{ imageCreateState === MsdImageCreateState.NotCreated ? $t('label.not_created') :
+            imageCreateState === MsdImageCreateState.Created ? $t('label.created') : $t('label.none') }}
+        </v-chip>
+        <v-chip :color="imageConnectStateColor" class="ma-2">
+          {{ imageConnectState === MsdImageConnectState.NotConnect ? $t('label.connected') :
+            imageConnectState === MsdImageConnectState.Connected ? $t('label.dis_connected') : $t('label.none') }}
+        </v-chip>
       </div>
-
-      <v-toolbar flat>
-
-        <v-toolbar-title
-          :style="{ flex: '1 1 auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }">
-          {{ $t('message.availableImage') }}
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-toolbar-title
-          :style="{ color: getColor(100 - parseFloat(items.capacity)), flex: '1 1 auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }"
-          class="custom-subtitle">
-          {{ $t('available') }} {{ parseFloat(items.capacity) }}% ({{ convertBytesToGB(items.used) }}Gb) {{ $t('of') }}
-          {{
-            convertBytesToGB(items.size)
-          }}Gb
-        </v-toolbar-title>
-
-
-        <v-btn @click="handleRefreshMSDListClick" append-icon="mdi-refresh" :ripple="true" color="primary">
-          <v-tooltip activator="parent" location="bottom">{{ $t('refreshList') }}</v-tooltip>
-        </v-btn>
-
-        <v-dialog v-model="dialogResize" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to resize filesystem?</v-card-title>
-            <v-spacer></v-spacer>
-            <v-btn color="blue-darken-1" variant="text" @click="closeResize">Cancel</v-btn>
-            <v-btn color="blue-darken-1" variant="text" @click="resizeConfirm">OK</v-btn>
-            <v-spacer></v-spacer>
-          </v-card>
-        </v-dialog>
-
-        <v-dialog v-model="dialogRemove" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to remove image?</v-card-title>
-            <v-card-text v-if="selectedItem">
-              Image Name: {{ selectedItem.name }}
-            </v-card-text>
-
-            <v-spacer></v-spacer>
-            <v-btn color="blue-darken-1" variant="text" @click="closeRemove">Cancel</v-btn>
-            <v-btn color="blue-darken-1" variant="text" @click="removeItemConfirm(selectedItem.path)">OK</v-btn>
-            <v-spacer></v-spacer>
-          </v-card>
-        </v-dialog>
-
-      </v-toolbar>
-
 
       <Dashboard :uppy="uppy" :props="{
         metaFields: [{ id: 'name', name: 'Name', placeholder: 'File name' }],
@@ -91,6 +49,43 @@
         showProgressDetails: true,
         doneButtonHandler: handleDoneButtonClick
       }" />
+
+      <v-toolbar flat>
+
+        <v-toolbar-title
+          :style="{ flex: '1 1 auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }">
+          {{ $t('tab.msd.available_images') }}
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-title
+          :style="{ color: getColor(100 - parseFloat(items.capacity)), flex: '1 1 auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }"
+          class="custom-subtitle">
+          {{ $t('common.available') }} {{ parseFloat(items.capacity) }}% ({{ convertBytesToGB(items.used) }}Gb) {{ $t('of') }}
+          {{
+            convertBytesToGB(items.size)
+          }}Gb
+        </v-toolbar-title>
+
+
+        <v-btn @click="handleRefreshMSDListClick" append-icon="mdi-refresh" :ripple="true" color="primary">
+          <v-tooltip activator="parent" location="bottom">{{ $t('tab.msd.refresh_list') }}</v-tooltip>
+        </v-btn>
+
+        <v-dialog v-model="dialogRemove" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">{{ $t('tab.msd.remove_image_confirm') }}</v-card-title>
+            <v-card-text v-if="selectedItem">
+              {{ $t('tab.msd.image_name') }}: {{ selectedItem.name }}
+            </v-card-text>
+
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeRemove">{{ $t('button.cancel') }}</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="removeItemConfirm(selectedItem.path)">{{ $t('button.ok') }}</v-btn>
+            <v-spacer></v-spacer>
+          </v-card>
+        </v-dialog>
+
+      </v-toolbar>
 
       <v-data-table v-model="selected" height="215px" :loading="loading" :headers="headers" :items="items.files"
         item-value="name" fixed-header :multi-sort="true" no-data-text="No data available" return-object>
@@ -113,7 +108,7 @@
             <td>
               <v-btn @click="!uploading && openRemoveDialog(item)" :disabled="uploading" append-icon="mdi-delete"
                 size="small" class="align-center" color="primary" :ripple="true">
-                <v-tooltip activator="parent" location="bottom">Remove image</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('tab.msd.remove_image_tip') }}</v-tooltip>
               </v-btn>
             </td>
           </tr>
@@ -121,7 +116,7 @@
       </v-data-table>
 
       <div class="d-flex ga-4 align-center flex-row">
-        <v-label class="text-subtitlte-1">Make MSD Size</v-label>
+        <v-label class="text-subtitlte-1">{{ $t('tab.msd.make_msd_size') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="actualMSDImageSize" min="1" :max="maxMSDImageSize" color="primary"
           step="1" hide-details>
           <template v-slot:append>
@@ -138,39 +133,39 @@
 
       <div class="grid-container">
         <v-btn key="primary" color="primary" @click=makeMSDDrive()
-          :disabled="imageCreateState === MsdImageCreateState.Created || makeMSDImageFlag">make usb drive</v-btn>
+          :disabled="imageCreateState === MsdImageCreateState.Created || makeMSDImageFlag">{{ $t('tab.msd.make_usb_drive') }}</v-btn>
         <v-dialog v-model="availableImage">
           <v-card>
             <v-card-text>
               {{ imageMakeResultText }}
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" block @click="availableImage = false">Close</v-btn>
+              <v-btn color="primary" block @click="availableImage = false">{{ $t('button.close') }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click=deleteMSDImage()>delete usb drive</v-btn>
+        <v-btn key="primary" color="primary" @click=deleteMSDImage()>{{ $t('tab.msd.delete_usb_drive') }}</v-btn>
         <v-dialog v-model="imageRemoveDialog">
           <v-card>
             <v-card-text>
               {{ imageRemoveResultText }}
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" block @click="imageRemoveDialog = false">Close</v-btn>
+              <v-btn color="primary" block @click="imageRemoveDialog = false">{{ $t('button.close') }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click="connectMSDImage('true')">connect to host</v-btn>
-        <v-btn key="primary" color="primary" @click="connectMSDImage('false')">abort</v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('true')"> {{ $t('tab.msd.connect_to_host') }} </v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('false')">{{ $t('tab.msd.abort') }}</v-btn>
         <v-dialog v-model="imageConnectDialog">
           <v-card>
             <v-card-text>
               {{ imageConnectResultText }}
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" block @click="imageConnectDialog = false">Close</v-btn>
+              <v-btn color="primary" block @click="imageConnectDialog = false">{{ $t('button.close') }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -510,7 +505,7 @@ onMounted(async () => {
   await getMSDState();
 
   uppy.value = new Uppy({ id: 'uppy1', autoProceed: false, debug: true })
-    .use(Tus, { endpoint: `http://${Config.host_ip}:${store.tusPort}` , chunkSize: 5*1024*1024,})
+    .use(Tus, { endpoint: `http://${Config.host_ip}:${store.tusPort}`, chunkSize: 5 * 1024 * 1024, })
     .on('upload-success', (file, response) => {
       handleRefreshMSDListClick();
     });
