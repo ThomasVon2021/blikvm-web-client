@@ -116,7 +116,8 @@
             "reset_take_effect":"重启修改参数生效",
             "Mbps":"Mbps",
             "gop":"gop",
-            "reset_stream":"重启视频进程"
+            "reset_stream":"重启视频进程",
+            "resolution":"分辨率"
         },
         "terminal":"终端",
         "full_screen":"全屏",

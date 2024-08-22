@@ -116,7 +116,8 @@
             "reset_take_effect":"Reset to take effect",
             "Mbps":"Mbps",
             "gop":"gop",
-            "reset_stream":"Reset stream"
+            "reset_stream":"Reset stream",
+            "resolution":"Resolution"
         },
         "terminal":"Terminal",
         "full_screen":"Full Screen",

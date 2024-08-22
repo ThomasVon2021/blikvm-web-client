@@ -30,6 +30,13 @@
     </template>
     <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
       <div class="d-flex align-center">
+        <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
+        <v-chip :color="imageCreateStateColor" class="ma-2">
+          {{ resolutionWidth }} x {{ resolutionHeight }} {{ capturedFps }}Hz
+        </v-chip>
+      </div>
+
+      <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
@@ -109,7 +116,7 @@ import http from '@/utils/http.js';
 
 const store = useAppStore();
 const menu = ref(false);
-const { videoMode, videoServerPort } = storeToRefs(store);
+const { videoMode, videoServerPort,resolutionWidth,resolutionHeight,capturedFps } = storeToRefs(store);
 const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);
