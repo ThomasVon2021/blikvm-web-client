@@ -75,7 +75,10 @@
             "remove_image_tip":"Remove image",
             "remove_image_confirm":"Are you sure you want to remove image?"   
         },
-        "notification":"Notification",
+        "notification":{
+            "tip":"Notification",
+            "log":"The latest 20 logs"
+        },
         "switch":{
             "tip":"Switch",
             "choose_a_model":"Choose a model",

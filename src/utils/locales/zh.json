@@ -75,7 +75,10 @@
             "remove_image_tip":"移除镜像",
             "remove_image_confirm":"你确定要移除镜像吗?"   
         },
-        "notification":"通知",
+        "notification":{
+            "tip":"通知",
+            "log":"最近20行日志"
+        },
         "switch":{
             "tip":"切换器",
             "choose_a_model":"选择型号",
