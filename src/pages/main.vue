@@ -30,7 +30,14 @@
 </template>
 
 <script setup>
-
+import { onMounted } from 'vue';
+const { proxy } = getCurrentInstance();
+onMounted(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedLanguage) {
+        proxy.$i18n.locale = savedLanguage;
+    }
+});
 </script>
 
 <style>
