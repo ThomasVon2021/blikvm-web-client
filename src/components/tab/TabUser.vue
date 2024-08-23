@@ -46,6 +46,27 @@
           <v-list-item-title class="text-subtitle-2"> {{ $t('tab.user.logout') }} </v-list-item-title>
         </v-list-item>
 
+        <v-list-item @click="openDocs" color="secondary" rounded="md">
+          <template v-slot:prepend>
+            <BrandWikipediaIcon size="20" class="mr-2" />
+          </template>
+          <v-list-item-title class="text-subtitle-2"> {{ $t('tab.user.docs') }} </v-list-item-title>
+        </v-list-item>
+
+        <v-list-item @click="openDiscord" color="secondary" rounded="md">
+          <template v-slot:prepend>
+            <BrandDiscordIcon size="20" class="mr-2" />
+          </template>
+          <v-list-item-title class="text-subtitle-2"> {{ $t('tab.user.dsicord') }} </v-list-item-title>
+        </v-list-item>
+
+        <v-list-item @click="openIssue" color="secondary" rounded="md">
+          <template v-slot:prepend>
+            <BellQuestionIcon size="20" class="mr-2" />
+          </template>
+          <v-list-item-title class="text-subtitle-2"> {{ $t('tab.user.issue') }} </v-list-item-title>
+        </v-list-item>
+
     </UiParentCard>
   </v-menu>
 
@@ -95,7 +116,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { SettingsIcon, LogoutIcon } from 'vue-tabler-icons';
+import { SettingsIcon, LogoutIcon, BrandDiscordIcon, BrandWikipediaIcon, BellQuestionIcon } from 'vue-tabler-icons';
 import http from '@/utils/http.js';
 import { useAppStore } from '@/stores/stores';
 import { useRouter } from 'vue-router';
@@ -114,6 +135,18 @@ const changePasswordD = ref(false);
 const changeMessage = ref('1');
 let changeSuccessFlag = false;
 const router = useRouter();
+
+const openDiscord = () => {
+  window.open('https://discord.com/invite/9Y374gUF6C', '_blank');
+};
+
+const openDocs = () => {
+  window.open('https://wiki.blicube.com/blikvm/', '_blank');
+};
+
+const openIssue = () => {
+  window.open('https://github.com/ThomasVon2021/blikvm/issues', '_blank');
+};
 
 const openSettingsDialog = () => {
   isSettingsDialogOpen.value = true;

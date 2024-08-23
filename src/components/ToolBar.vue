@@ -104,6 +104,7 @@ async function getDeviceVersion() {
       store.deviceVersion = response.data.data.device;
       store.deviceType = response.data.data.deviceType;
       store.manufacturer = response.data.data.manufacturer;
+      store.hardwareType = response.data.data.hardwareType;
     } else {
       console.log('Response error:', response);
     }

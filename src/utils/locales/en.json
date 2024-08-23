@@ -108,7 +108,10 @@
             "confirm_password":"Confirm Password",
             "current_password":"Current Password",
             "change_password":"Change Password",
-            "version":"Version"
+            "version":"Version",
+            "docs":"Docs",  
+            "dsicord":"Discord",
+            "issue":"Issue"
         },
         "video":{
             "tip":"Video",

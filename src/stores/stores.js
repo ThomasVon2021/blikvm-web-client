@@ -33,6 +33,7 @@ export const useAppStore = defineStore('app', {
     keyboardStatus: false,
     deviceVersion: "BliKVM",
     deviceType: "KVM-over-IP",
+    hardwareType: "pi",
     manufacturer: "BliCube LLC",
     LatencyMS: 0,
     videoServerPort: 10004,

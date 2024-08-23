@@ -40,7 +40,7 @@
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
-          <v-radio label="h264" color="primary" value="h264"></v-radio>
+          <v-radio label="h264" color="primary" value="h264":disabled="hardwareType !== 'pi'"></v-radio>
         </v-radio-group>
       </div>
 
@@ -116,7 +116,7 @@ import http from '@/utils/http.js';
 
 const store = useAppStore();
 const menu = ref(false);
-const { videoMode, videoServerPort,resolutionWidth,resolutionHeight,capturedFps } = storeToRefs(store);
+const { videoMode, videoServerPort,resolutionWidth,resolutionHeight,capturedFps,hardwareType } = storeToRefs(store);
 const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);

@@ -108,7 +108,10 @@
             "confirm_password":"确认密码",
             "current_password":"当前密码",
             "change_password":"修改密码",
-            "version":"版本"
+            "version":"版本",
+            "docs":"文档",  
+            "dsicord":"Discord",
+            "issue":"问题"
         },
         "video":{
             "tip":"视频",
