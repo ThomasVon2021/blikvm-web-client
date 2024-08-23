@@ -24,7 +24,7 @@ import axios from 'axios';
 import Config from '@/config.js';
 
 const http = axios.create({
-    baseURL: `http://${Config.host_ip}:10001/api`,
+    baseURL: `http://${Config.host_ip}${Config.host_port}/api`,
     withCredentials: true
 });
 
