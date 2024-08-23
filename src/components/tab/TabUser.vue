@@ -21,20 +21,17 @@
 ****************************************************************************
 -->
 <template>
-  <v-menu>
-    <template v-slot:activator="{ props: menu }">
-      <v-tooltip location="top">
-        <template v-slot:activator="{ props: tooltip }">
-          <v-btn icon class="toolbar-btn" size="30" v-bind="mergeProps(menu, tooltip)">
-            <v-icon class="toolbar-icon">mdi-account-key</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t('tab.user.tip') }}</span>
-      </v-tooltip>
+  <v-menu v-model="menu" :close-on-content-click="false" location="bottom" >
+
+    <template v-slot:activator="{ props }">
+      <v-btn icon class="toolbar-btn" size="30" v-bind="props">
+        <v-icon class="toolbar-icon">mdi-account-key</v-icon>
+        <v-tooltip activator="parent" location="bottom">{{ $t('tab.user.tip') }} </v-tooltip>
+      </v-btn>
     </template>
 
-    <div class="pa-4" @mouseenter.stop @mousemove.stop>
-      <v-list class="mt-3">
+      <UiParentCard  :title="`${$t('tab.user.version')} ${webversion}`" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+
         <v-list-item @click="openSettingsDialog" color="secondary" rounded="md">
           <template v-slot:prepend>
             <SettingsIcon size="20" class="mr-2" />
@@ -48,8 +45,8 @@
           </template>
           <v-list-item-title class="text-subtitle-2"> {{ $t('tab.user.logout') }} </v-list-item-title>
         </v-list-item>
-      </v-list>
-    </div>
+
+    </UiParentCard>
   </v-menu>
 
   <v-dialog v-model="isSettingsDialogOpen" persistent @keydown.stop @keyup.stop max-width="500px">
@@ -98,15 +95,17 @@
 
 <script setup>
 import { ref } from 'vue';
-import { mergeProps } from 'vue';
-import { SettingsIcon, LogoutIcon, UserIcon } from 'vue-tabler-icons';
+import { SettingsIcon, LogoutIcon } from 'vue-tabler-icons';
 import http from '@/utils/http.js';
 import { useAppStore } from '@/stores/stores';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import UiParentCard from '@/components/shared/UiParentCard.vue';
 
+const menu = ref(false);
 const isSettingsDialogOpen = ref(false);
 const store = useAppStore();
-
+const { webversion } = storeToRefs(store);
 const nusername = ref(store.username);
 const cpassword = ref('');
 const npassword = ref('');

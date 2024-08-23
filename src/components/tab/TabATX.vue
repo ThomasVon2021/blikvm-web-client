@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -25,13 +24,22 @@
   <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
 
     <template v-slot:activator="{ props }">
-      <v-btn icon class="toolbar-btn" size="30" v-bind="props">
+      <v-btn icon :class="{'active-toolbar-btn': ledPwr, 'inactive-toolbar-btn': !ledPwr}" size="30" v-bind="props">
         <v-icon class="toolbar-icon">mdi-power</v-icon>
         <v-tooltip activator="parent" location="bottom">{{ $t('tab.atx.tip') }} </v-tooltip>
       </v-btn>
     </template>
 
     <UiParentCard  :title="$t('tab.atx.title')" @mouseenter.stop @mousemove.stop @keydown.stop @keypress.stop @keyup.stop>
+      <div class="d-flex align-center">
+        <v-label class="font-weight-medium align-center">{{ $t('label.status') }}: </v-label>
+        <v-chip  class="ma-2" :class="{'active-toolbar-btn': ledPwr, 'inactive-toolbar-btn': !ledPwr}">
+        {{ $t('tab.atx.ledPwr') }}
+        </v-chip>
+        <v-chip class="ma-2" :class="{'active-toolbar-btn': ledHDD, 'inactive-toolbar-btn': !ledHDD}">
+          {{ $t('tab.atx.ledHdd') }}
+        </v-chip>
+      </div>
       <v-row>
         <v-col cols="12" sm="6" md="6" class="text-center align-center" >
           <v-btn @click="triggerPowerButton('power')" append-icon="mdi-power" color="primary">
@@ -68,9 +76,13 @@
 <script setup>
 import http from '@/utils/http.js';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
+import { useAppStore } from '@/stores/stores';
+import { storeToRefs } from 'pinia';
 
 const menu = ref(false);
 const macAddress = ref('');
+const store = useAppStore();
+const { ledPwr, ledHDD } = storeToRefs(store);
 
 const triggerPowerButton = async (button) => {
   try {
@@ -98,6 +110,36 @@ const wakeOnLan = async () => {
 .align-center {
   display: flex;
   align-items: center;
-  justify-content: center;
+}
+
+.active-toolbar-btn {
+    color: rgb(52, 231, 8);
+    border: 2px solid rgb(52, 231, 8);
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+    animation: blink-animation 1s infinite; 
+}
+
+.inactive-toolbar-btn {
+    color:red;
+    border: 2px solid red;
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+@keyframes blink-animation {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>

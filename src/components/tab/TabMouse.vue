@@ -39,7 +39,7 @@
             </div>
 
             <div v-if="absoluteMode === false" class="d-flex align-center">
-                <v-label class="text-subtitlte-1">Sensitivity</v-label>
+                <v-label class="text-subtitlte-1"> {{ $t('tab.mouse.sensitivity') }} </v-label>
                 <v-slider class="flex-grow-1 mx-3" v-model="slider_sensitivity" color="primary" max="1" step="0.1"
                     show-ticks="always" hide-details @input="handleSensitivityChange">
                     <template v-slot:append>

@@ -25,6 +25,9 @@ function handleWSMessage( event, store ){
 
     const message = JSON.parse(event);
 
+    if(message.version != null){
+      store.webversion = message.version;
+    }
     if (message.data.mouseStatus != null) {
       store.mouseStatus = message.data.mouseStatus;
     }
@@ -63,6 +66,10 @@ function handleWSMessage( event, store ){
       store.alert = message.data.alert;
       store.newAlert = true;
       console.log(store.alert,  store.newAlert);
+    }
+    if( message.data.atxStatus != null ){
+      store.ledPwr = message.data.atxStatus.ledPwr;
+      store.ledHDD = message.data.atxStatus.ledHDD;
     }
 }
 

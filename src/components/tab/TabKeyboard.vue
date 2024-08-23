@@ -375,21 +375,4 @@ watch(() => props.input, (newValue, oldValue) => {
   width: 350px;
 }
 
-.active-toolbar-btn {
-    color: rgb(52, 231, 8);
-    border: 2px solid rgb(52, 231, 8);
-    border-radius: 50%;
-    padding: 5px;
-    margin-right: 15px;
-    transition: color 0.3s ease;
-}
-
-.inactive-toolbar-btn {
-    color:red;
-    border: 2px solid red;
-    border-radius: 50%;
-    padding: 5px;
-    margin-right: 15px;
-    transition: color 0.3s ease;
-}
 </style>

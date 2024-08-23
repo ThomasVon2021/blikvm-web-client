@@ -40,7 +40,9 @@
             "atx_poweroff":"关机",
             "atx_forceoff":"强制关机",
             "atx_reset":"重启",
-            "wake_on_lan": "Wake on LAN"
+            "wake_on_lan": "Wake on LAN",
+            "ledPwr":"电源指示灯",
+            "ledHdd":"硬盘指示灯"
             },
         "home":"主页",
         "keyboard":"键盘",
@@ -105,7 +107,8 @@
             "new_password":"新密码",
             "confirm_password":"确认密码",
             "current_password":"当前密码",
-            "change_password":"修改密码"
+            "change_password":"修改密码",
+            "version":"版本"
         },
         "video":{
             "tip":"视频",

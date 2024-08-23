@@ -40,7 +40,9 @@
         "atx_poweroff":"Power OFF",
         "atx_forceoff":"Force OFF",
         "atx_reset":"Reset",
-        "wake_on_lan": "Wake on LAN"
+        "wake_on_lan": "Wake on LAN",
+        "ledPwr":"Power LED",
+        "ledHdd":"HDD LED"
         },
         "home":"Home",
         "keyboard":"Keyboard",
@@ -105,7 +107,8 @@
             "new_password":"New Password",
             "confirm_password":"Confirm Password",
             "current_password":"Current Password",
-            "change_password":"Change Password"
+            "change_password":"Change Password",
+            "version":"Version"
         },
         "video":{
             "tip":"Video",

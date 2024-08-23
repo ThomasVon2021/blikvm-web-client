@@ -1,4 +1,3 @@
-
 /*****************************************************************************
 #                                                                            #
 #    blikvm                                                                  #
@@ -52,6 +51,9 @@ export const useAppStore = defineStore('app', {
     newNotification: false,
     alert: '',
     newAlert: false,
+    ledPwr: false,
+    ledHDD: false,
+    webversion: '',
   }),
   actions: {
     switchKeyboardStatus() {
