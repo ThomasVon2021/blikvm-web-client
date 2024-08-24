@@ -28,8 +28,8 @@ import project from '../package.json';
 /**
  * Change the IP address below to your development testing machine's IP address. In the official environment, this configuration is invalid
  */
-const dev_device_ip = '192.168.8.27';
-const dev_device_port = 80;
+const dev_device_ip = '192.168.1.21';
+const dev_device_port = '';
 
 const env = process.env.NODE_ENV;
 

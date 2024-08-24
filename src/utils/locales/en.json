@@ -123,7 +123,8 @@
             "Mbps":"Mbps",
             "gop":"gop",
             "reset_stream":"Reset stream",
-            "resolution":"Resolution"
+            "resolution":"Resolution",
+            "volume":"Volume"
         },
         "terminal":"Terminal",
         "full_screen":"Full Screen",

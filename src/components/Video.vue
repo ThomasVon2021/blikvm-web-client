@@ -321,7 +321,7 @@ const attachUStreamerPlugin = () => {
     success: (pluginHandle) => {
       console.log('attach ustreamer plugin success');
       uStreamerPluginHandle.value = pluginHandle;
-      uStreamerPluginHandle.value.send({ message: { request: "watch" } });
+      uStreamerPluginHandle.value.send({ message: { request: "watch" , params: {audio: true,video: true}} });
     },
     error: console.error,
     onmessage: (msg, jsepOffer) => {
@@ -352,16 +352,16 @@ const attachUStreamerPlugin = () => {
       if (isAdded) {
         console.log('attach ustreamer rt added');
         const videoElement = document.getElementById("webrtc-output");
-        const stream = new MediaStream();
-        stream.addTrack(mediaStreamTrack.clone());
-        videoElement.srcObject = stream;
+        if (videoElement.srcObject === null) {
+              videoElement.srcObject = new MediaStream();
+            }
+        videoElement.srcObject.addTrack(mediaStreamTrack.clone());
       }
     },
   });
 };
 
 const onVideoLoaded = () => {
-  //
 };
 
 const requestPointerLock = () => {
@@ -450,7 +450,6 @@ onMounted(() => {
   }).on('error', () => {
     console.error('Failed to copy text.');
   });
-
 });
 
 onUnmounted(() => {

@@ -31,7 +31,7 @@
     <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
-        <v-chip :color="imageCreateStateColor" class="ma-2">
+        <v-chip class="ma-2">
           {{ resolutionWidth }} x {{ resolutionHeight }} {{ capturedFps }}Hz
         </v-chip>
       </div>
@@ -42,6 +42,16 @@
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
           <v-radio label="h264" color="primary" value="h264":disabled="hardwareType !== 'pi'"></v-radio>
         </v-radio-group>
+      </div>
+
+      <div v-if="videoMode === 'h264'" class="d-flex align-center">
+        <v-label class="text-subtitlte-1">{{ $t('tab.video.volume') }}</v-label>
+        <v-slider class="flex-grow-1 mx-3" v-model="slider_h264_audio" color="secondary" min="0" max="1" step="0.1" show-ticks="always"
+          hide-details @update:modelValue="adjustVolume">
+          <template v-slot:append>
+            <v-text-field variant="plain" v-model="slider_h264_audio"></v-text-field>
+          </template>
+        </v-slider>
       </div>
 
       <div class="d-flex ga-4 align-center flex-row">
@@ -120,9 +130,20 @@ const { videoMode, videoServerPort,resolutionWidth,resolutionHeight,capturedFps,
 const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);
-const slider_h264_gop = ref(30); 
+const slider_h264_gop = ref(30);
+const slider_h264_audio = ref(0); 
 const resetDialog = ref(false);
 const resetResultText = ref('');
+
+function adjustVolume (){
+  const videoElement = document.getElementById('webrtc-output');
+  console.log('Volume:', slider_h264_audio.value);
+  if (videoElement) {
+    videoElement.muted = false;
+    videoElement.volume = slider_h264_audio.value; 
+  }
+};
+
 
 watch(videoMode, (newMode) => {
   localStorage.setItem('videoMode', newMode);

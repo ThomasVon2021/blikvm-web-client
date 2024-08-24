@@ -123,7 +123,8 @@
             "Mbps":"Mbps",
             "gop":"gop",
             "reset_stream":"重启视频进程",
-            "resolution":"分辨率"
+            "resolution":"分辨率",
+            "volume":"音量"
         },
         "terminal":"终端",
         "full_screen":"全屏",
