@@ -38,8 +38,8 @@
             imageCreateState === MsdImageCreateState.Created ? $t('label.created') : $t('label.none') }}
         </v-chip>
         <v-chip :color="imageConnectStateColor" class="ma-2">
-          {{ imageConnectState === MsdImageConnectState.NotConnect ? $t('label.connected') :
-            imageConnectState === MsdImageConnectState.Connected ? $t('label.dis_connected') : $t('label.none') }}
+          {{ imageConnectState === MsdImageConnectState.NotConnect ? $t('label.dis_connected') :
+            imageConnectState === MsdImageConnectState.Connected ? $t('label.connected') : $t('label.none') }}
         </v-chip>
       </div>
 
@@ -145,7 +145,7 @@
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click=deleteMSDImage()>{{ $t('tab.msd.delete_usb_drive') }}</v-btn>
+        <v-btn key="primary" color="primary" @click=deleteMSDImage() :disabled="imageCreateState !== MsdImageCreateState.Created">{{ $t('tab.msd.delete_usb_drive') }}</v-btn>
         <v-dialog v-model="imageRemoveDialog">
           <v-card>
             <v-card-text>
@@ -157,8 +157,10 @@
           </v-card>
         </v-dialog>
 
-        <v-btn key="primary" color="primary" @click="connectMSDImage('true')"> {{ $t('tab.msd.connect_to_host') }} </v-btn>
-        <v-btn key="primary" color="primary" @click="connectMSDImage('false')">{{ $t('tab.msd.abort') }}</v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('true')" :disabled="imageCreateState !== MsdImageCreateState.Created || imageConnectState === MsdImageConnectState.Connected"
+        > {{ $t('tab.msd.connect_to_host') }} </v-btn>
+        <v-btn key="primary" color="primary" @click="connectMSDImage('false')" :disabled="imageCreateState !== MsdImageCreateState.Created || imageConnectState === MsdImageConnectState.NotConnect" 
+        >{{ $t('tab.msd.abort') }}</v-btn>
         <v-dialog v-model="imageConnectDialog">
           <v-card>
             <v-card-text>

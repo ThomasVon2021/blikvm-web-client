@@ -137,7 +137,7 @@ const switchStateColor = computed(() => {
 
 async function changeSwitchChannel() {
   try {
-      const response = await http.post(`/switch/change?channel=${channelValue.value}&module=${switchValue.value}`);
+      const response = await http.post(`/switch/setchannel?channel=${channelValue.value}&module=${switchValue.value}`);
       if (response.status === 200 && response.data.code === 0) {
         console.log('set module success');
       }
