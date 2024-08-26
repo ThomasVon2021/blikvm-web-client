@@ -76,7 +76,7 @@ onUnmounted(() => {
     /* Adjust as needed */
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1001;
+    z-index: 3000;
     /* Ensure it's above the video */
 }
 </style>
