@@ -40,5 +40,6 @@ export default {
     version:version,
     build:build,
     host_ip : env === 'development' ? dev_device_ip : window.location.hostname,
-    host_port: env === 'development' ? dev_device_port : (window.location.port && parseInt(window.location.port) !== 80 ? `:${window.location.port}` : '')
+    host_port: env === 'development' ? dev_device_port : (window.location.port && parseInt(window.location.port) !== 80 ? `:${window.location.port}` : ''),
+    http_protocol: window.location.protocol
 }
