@@ -36,6 +36,8 @@ import 'xterm/css/xterm.css';
 import { debounce } from 'lodash';
 import Config from '@/config.js';
 
+const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
+
 const packStdin = data => JSON.stringify({ Op: 'stdin', Data: data });
 const packResize = (cols, rows) => JSON.stringify({ Op: 'resize', Cols: cols, Rows: rows });
 
@@ -45,7 +47,7 @@ const term = ref(null);
 const fitAddon = ref(null);
 const ws = ref(null);
 const terminal = ref(null);
-const socketUrl = `ws://${Config.host_ip}:${Config.host_port}/ssh`;
+const socketUrl = `${wsProtocol}://${Config.host_ip}:${Config.host_port}/ssh`;
 const option = {
     lineHeight: 1.0,
     cursorBlink: true,
@@ -115,10 +117,10 @@ const onOpenSocket = () => {
 
 const onCloseSocket = () => {
     ws.value.onclose = () => {
-        term.value.write("Not connected, reconnect in 3 seconds...\r\n");
-        setTimeout(() => {
-            initSocket();
-        }, 3000);
+        term.value.write("Connection failed, Please check your account and password information, then you can refresh and try again.\r\n");
+        // setTimeout(() => {
+        //     initSocket();
+        // }, 3000);
     }
 }
 

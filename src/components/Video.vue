@@ -98,7 +98,7 @@ import http from '@/utils/http.js';
 import ClipboardJS from 'clipboard';
 
 const store = useAppStore();
-const { videoMode, absoluteMode, videoServerPort, ocrSelection } = storeToRefs(store);
+const { videoMode, absoluteMode, ocrSelection } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
@@ -111,10 +111,10 @@ const ocrDialog = ref(false);
 const ocrText = ref('');
 const ocrTextFlag = ref(false);
 const isMouseInside = ref(false);
+const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
 
-const mjpegUrl = ref(`http://${Config.host_ip}:${videoServerPort.value}/stream`);
-
-const ws = new WebSocket(`ws://${Config.host_ip}${Config.host_port}/wss`);
+const mjpegUrl = ref(`${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`);
+const ws = new WebSocket(`${wsProtocol}://${Config.host_ip}${Config.host_port}/wss`);
 
 ws.addEventListener('open', () => {
   console.log('WebSocket connection established');
@@ -308,7 +308,7 @@ const initVideo = () => {
   });
 
   janus.value = new Janus({
-    server: `ws://${Config.host_ip}:8188/`,
+    server: `${wsProtocol}://${Config.host_ip}${Config.host_port}/janus`,
     success: attachUStreamerPlugin,
     error: console.error,
   });

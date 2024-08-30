@@ -505,9 +505,8 @@ onMounted(async () => {
 
   await getMSDList();
   await getMSDState();
-
   uppy.value = new Uppy({ id: 'uppy1', autoProceed: false, debug: true })
-    .use(Tus, { endpoint: `http://${Config.host_ip}:${store.tusPort}`, chunkSize: 5 * 1024 * 1024, })
+    .use(Tus, { endpoint: `${Config.http_protocol}//${Config.host_ip}${Config.host_port}/tus`, chunkSize: 5 * 1024 * 1024, })
     .on('upload-success', (file, response) => {
       handleRefreshMSDListClick();
     });
