@@ -10,7 +10,8 @@
     "common":{
         "available":"可用的",
         "refresh":"刷新",
-        "device_path": "设备路径"
+        "device_path": "设备路径",
+        "reboot_info": "你确定要重启KVM吗?重启后,web会断开连接几分钟"
     },
     "button":{
         "reboot":"重启",
@@ -125,6 +126,17 @@
             "reset_stream":"重启视频进程",
             "resolution":"分辨率",
             "volume":"音量"
+        },
+        "setting":{
+            "tip":"设置",
+            "fetch_version":"获取最新版本",
+            "switch_protocol":"切换协议",
+            "http":"HTTP",
+            "https":"HTTPS",
+            "reboot_kvm":"重启KVM",
+            "fetch": "获取",
+            "no_new_version":"没有新版本",
+            "new_version":"你可以去终端更新新版本"
         },
         "terminal":"终端",
         "full_screen":"全屏",

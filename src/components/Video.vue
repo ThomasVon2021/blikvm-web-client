@@ -21,11 +21,11 @@
 ****************************************************************************
 -->
 <template>
-  <div id="kvm" class="kvm-area" @click="requestPointerLock" >
-    <img id="image" draggable="false" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
+  <div id="kvm" class="kvm-area" >
+    <img id="image" draggable="false"  @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter" />
-    <video draggable="false" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
+    <video draggable="false"  @click="requestPointerLock" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel"
       @contextmenu="handleContextMenu"       @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter"></video>
@@ -364,15 +364,15 @@ const attachUStreamerPlugin = () => {
 const onVideoLoaded = () => {
 };
 
-const requestPointerLock = () => {
-  const element = document.getElementById('kvm');
+const requestPointerLock = (event) => {
+  const element = event.target;
   if (absoluteMode.value === false && element.requestPointerLock) {
     element.requestPointerLock();
   }
 };
 
 const handlePointerLockChange = () => {
-  if (document.pointerLockElement === document.getElementById('kvm')) {
+  if (document.pointerLockElement) {
     console.log('Pointer is locked');
   } else {
     console.log('Pointer is unlocked');

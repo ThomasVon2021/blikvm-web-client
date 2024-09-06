@@ -10,7 +10,8 @@
     "common":{
         "available":"Available",
         "refresh":"Refresh",
-        "device_path": "device path"
+        "device_path": "device path",
+        "reboot_info": "Are you sure to restart KVM? Restarting the web will disconnect for a few minutes."
     },
     "button":{
         "reboot":"Reboot",
@@ -125,6 +126,17 @@
             "reset_stream":"Reset stream",
             "resolution":"Resolution",
             "volume":"Volume"
+        },
+        "setting":{
+            "tip":"Setting",
+            "fetch_version":"Fetch lasted version",
+            "switch_protocol":"Switch protocol",
+            "http":"HTTP",
+            "https":"HTTPS",
+            "reboot_kvm":"Reboot KVM",
+            "fetch": "Fetch",
+            "no_new_version":"No new version",
+            "new_version":"You can go to terminal to update the new version"
         },
         "terminal":"Terminal",
         "full_screen":"Full Screen",

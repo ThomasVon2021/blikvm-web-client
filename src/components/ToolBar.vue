@@ -42,6 +42,7 @@
             <TabLanguage />
             <TabUser/>
             <TabWebTerminal />
+            <TabSetting />
             <TabHome />
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
@@ -66,6 +67,7 @@ import { ref } from 'vue';
 import { useAppStore } from '@/stores/stores';
 import { storeToRefs } from 'pinia';
 import http from '@/utils/http.js';
+import TabSetting from './tab/TabSetting.vue';
 
 const store = useAppStore();
 const showAppBar = ref(true);
