@@ -29,6 +29,7 @@
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
             <TabNotification />
+            <TabShortcuts />
             <TabSwitch />
             <TabMSD />
             <TabVideo />

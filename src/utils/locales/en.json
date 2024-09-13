@@ -138,6 +138,9 @@
             "no_new_version":"No new version",
             "new_version":"You can go to terminal to update the new version"
         },
+        "shortcuts":{
+            "tip":"Shortcuts"
+        },
         "terminal":"Terminal",
         "full_screen":"Full Screen",
         "full_screen_exit":"Exit Full Screen",

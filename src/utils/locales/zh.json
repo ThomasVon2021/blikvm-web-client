@@ -138,6 +138,9 @@
             "no_new_version":"没有新版本",
             "new_version":"你可以去终端更新新版本"
         },
+        "shortcuts":{
+            "tip":"快捷键"
+        },
         "terminal":"终端",
         "full_screen":"全屏",
         "full_screen_exit":"退出全屏",
