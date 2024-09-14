@@ -125,11 +125,12 @@
             "gop":"gop",
             "reset_stream":"Reset stream",
             "resolution":"Resolution",
-            "volume":"Volume"
+            "volume":"Volume",
+            "refresh":"After clicking close, the page will automatically refresh after 3 seconds and resume normal operation"
         },
         "setting":{
             "tip":"Setting",
-            "fetch_version":"Fetch lasted version",
+            "fetch_version":"Fetch latest version",
             "switch_protocol":"Switch protocol",
             "http":"HTTP",
             "https":"HTTPS",

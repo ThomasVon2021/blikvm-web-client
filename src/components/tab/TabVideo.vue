@@ -103,10 +103,10 @@
         <v-dialog v-model="resetDialog">
           <v-card>
             <v-card-text>
-              {{ resetResultText }}
+              {{ resetResultText }}  {{ $t('tab.video.refresh') }}
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" block @click="resetDialog = false">{{ $t('common.close') }}</v-btn>
+              <v-btn color="primary" block @click="refreshPage">{{ $t('button.close') }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -134,6 +134,13 @@ const slider_h264_gop = ref(30);
 const slider_h264_audio = ref(0); 
 const resetDialog = ref(false);
 const resetResultText = ref('');
+
+function refreshPage(){
+  resetDialog.value = false;
+  setTimeout(() => {
+    window.location.reload();
+  }, 3000); // 3 seconds delay
+}
 
 function adjustVolume (){
   const videoElement = document.getElementById('webrtc-output');
