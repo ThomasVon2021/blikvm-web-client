@@ -383,18 +383,6 @@ const handlePointerLockError = () => {
   console.error('Error while locking pointer');
 };
 
-const getVideoStatus = async () => {
-  const response = await http.post('/video/state');
-  if (response.status === 200 && response.data.code === 0) {
-    store.resolutionWidth = response.data.data.width;
-    store.resolutionHeight = response.data.data.height;
-    store.capturedFps = response.data.data.capturedFps;
-    store.queuedFps = response.data.data.capturedFps;
-  } else {
-    console.log('get video state error');
-  }
-};
-
 async function ocrRecognition() {
   try {
     ocrDialog.value = false;
@@ -450,6 +438,10 @@ onMounted(() => {
   }).on('error', () => {
     console.error('Failed to copy text.');
   });
+
+  pingInterval = setInterval(() => {
+    sendPing(ws);
+  }, 5000);  
 });
 
 onUnmounted(() => {
