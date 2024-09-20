@@ -28,7 +28,7 @@
         <v-toolbar-title id="toolbar-title">BLIKVM {{ LatencyMS }} ms</v-toolbar-title>
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
-            <TabNotification />
+            <TabHome />
             <TabShortcuts />
             <TabSwitch />
             <TabMSD />
@@ -44,7 +44,7 @@
             <TabUser/>
             <TabWebTerminal />
             <TabSetting />
-            <TabHome />
+            <TabNotification />
             <v-btn icon @click="toggleFullScreen" class="toolbar-btn" size="30">
                 <v-icon class="toolbar-icon">{{ isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
                 <v-tooltip activator="parent" location="bottom">{{ isFullScreen ? $t('tab.full_screen_exit') : $t('tab.full_screen')

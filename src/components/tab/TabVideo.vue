@@ -65,7 +65,7 @@
 
       <div v-if="videoMode === 'mjpeg'" class="d-flex align-center">
         <v-label class="text-subtitlte-1">{{ $t('tab.video.quality') }}</v-label>
-        <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" color="primary" step="10" show-ticks="always"
+        <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" min="10" max="100" color="primary" step="10" show-ticks="always"
           hide-details>
           <template v-slot:append>
             <v-text-field variant="plain" v-model="slider_mjpeg_quality"></v-text-field>
@@ -151,7 +151,6 @@ function adjustVolume (){
   }
 };
 
-
 watch(videoMode, (newMode) => {
   localStorage.setItem('videoMode', newMode);
 });
@@ -204,15 +203,6 @@ async function resetStream() {
   } catch (error) {
     console.error('Error resetting stream:', error);
   }
-}
-
-function cancel() {
-  menu.value = false;
-}
-
-function save() {
-  alert(`Absolute mode: ${model.value}, Enable tablet: ${tablet.value}`);
-  menu.value = false;
 }
 
 onMounted(() => {
