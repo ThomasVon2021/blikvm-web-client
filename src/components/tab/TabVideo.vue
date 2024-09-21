@@ -190,7 +190,7 @@ async function resetStream() {
     if(stopResponse.data.data.state === "STOPPED"){
       const startResponse = await http.post('/video?action=start');
       if(startResponse.data.data.state === "RUNNING"){
-        resetResultText.value = "reset video success";
+        resetResultText.value = "Stream has been successfully resetted.";
         resetDialog.value = true;
       }else{
         resetResultText.value = startResponse.data.msg;
