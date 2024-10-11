@@ -1,8 +1,10 @@
 1. How to run this project
 ```
+cd web_client
 npm install
 npm run dev
 ```
+If you change somecode, you want to test, you can run web client in your pc. Before install and run, you need change `dev_device_ip` in config.js to your blikvm ip.
 
 ## 2. Commit Guidelines
 
