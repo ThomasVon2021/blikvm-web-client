@@ -1,4 +1,4 @@
-1. How to run this project
+## 1. How to run this project
 ```
 cd web_client
 npm install
@@ -6,6 +6,10 @@ npm run dev
 ```
 If you change somecode, you want to test, you can run web client in your pc. Before install and run, you need change `dev_device_ip` in config.js to your blikvm ip.
 
+If you want compile client inside the blikvm v4 allwinner, you need to
+```
+export NODE_OPTIONS=--max-old-space-size=4096
+```
 ## 2. Commit Guidelines
 
 The recommended format is as follows:
