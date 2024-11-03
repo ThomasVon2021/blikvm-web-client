@@ -166,7 +166,7 @@ const changePassword = async () => {
     newUsername: nusername.value,
     newPassword: npassword.value
   };
-  const response = await http.post('/changeaccount', requestBody);
+  const response = await http.post('/account/update', requestBody);
   if (response.status === 200) {
     changeMessage.value = "change success!";
     changeSuccessFlag = true;
