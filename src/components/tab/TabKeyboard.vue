@@ -1,4 +1,3 @@
-
 <!--
 ****************************************************************************
 #                                                                            #
@@ -40,7 +39,7 @@
 <script setup>
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
-import { ref, onMounted,onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 
 const emit = defineEmits(['onChange', 'onKeyPress', 'onKeyReleased']);
 const props = defineProps(['input']);
@@ -57,35 +56,95 @@ const initialMouseY = ref(0);
 const initialKeyboardX = ref(0);
 const initialKeyboardY = ref(0);
 
+const keyStates = {
+  '{shift}': false,
+  '{shiftleft}': false,
+  '{shiftright}': false,
+  '{controlleft}': false,
+  '{controlright}': false,
+  '{altleft}': false,
+  '{altright}': false,
+  '{metaleft}': false,
+  '{metaright}': false
+};
+
+const pressedKeys = {};
+
 const onChange = (input) => {
-    // emit("onChange", input);
-    // console.log("onChange Value", input);
+  // emit("onChange", input);
+  // console.log("onChange Value", input);
 };
 
-const onKeyReleased = (input) => {
-    emit("onKeyReleased", input);
-    // console.log("onChange Value", input);
-};
 
-const onKeyPress = (button) => {
-    emit("onKeyPress", button);
-    // console.log("onKeyPress Value", button);
-    if (
-        button === "{shift}" ||
-        button === "{shiftleft}" ||
-        button === "{shiftright}" ||
-        button === "{capslock}"
-    )
+function onKeyReleased(button, e) {
+  if (button === "{shift}" || button === "{shiftleft}" || button === "{shiftright}" || button === "{controlleft}" || button === "{controlright}" ||
+    button === "{altleft}" || button === "{altright}" || button === "{metaleft}" || button === "{metaright}") {
+    if (!keyStates[button]) {
+      emit("onKeyReleased", button);
+    }
+  } else {
+    emit("onKeyReleased", button);
+    for (let key in keyStates) {
+      if (keyStates[key]) {
+        emit("onKeyReleased", key);
+        //console.log("onKeyReleased Value", button, " e:", e.target);
+        keyStates[key] = !keyStates[key];
+        if (key === "{shift}" || key === "{shiftleft}" || key === "{shiftright}") {
+          handleShift();
+        }
+        if (pressedKeys[key]) {
+          pressedKeys[key].target.style.backgroundColor = "";
+          delete pressedKeys[key];
+        }
+        break;
+      }
+    }
+  }
+}
+
+
+function onKeyPress(button, e) {
+  //console.log("onKeyPress Value", button, " e:", e.target);
+  let keystate = false;
+  if (button === "{shift}" || button === "{shiftleft}" || button === "{shiftright}") {
     handleShift();
-};
+    keyStates[button] = !keyStates[button];
+    keystate = keyStates[button];
+    pressedKeys[button] = e;
+    emit("onKeyPress", button);
+  } else if (button === "{capslock}") {
+    handleShift();
+    emit("onKeyPress", button);
+  } else if (button === "{controlleft}" || button === "{controlright}" || button === "{altleft}" || button === "{altright}" || button === "{metaleft}" || button === "{metaright}") {
+    if (!keyStates[button]) {
+      emit("onKeyPress", button);
+    }
+    keyStates[button] = !keyStates[button];
+    pressedKeys[button] = e;
+    keystate = keyStates[button];
+  } else {
+    emit("onKeyPress", button);
+    for (let key in keyStates) {
+      if (keyStates[key]) {
+        e.target.style.backgroundColor = "";
+      }
+    }
+  }
+
+  if (keystate) {
+    e.target.style.backgroundColor = "#b0b0b0";
+  } else {
+    e.target.style.backgroundColor = "";
+  }
+}
 
 const handleShift = () => {
-    let currentLayout = keyboard.options.layoutName;
-    let shiftToggle = currentLayout === "default" ? "shift" : "default";
-    console.log("layout:",shiftToggle);
-    keyboard.setOptions({
-        layoutName: shiftToggle
-    });
+  let currentLayout = keyboard.options.layoutName;
+  let shiftToggle = currentLayout === "default" ? "shift" : "default";
+  //console.log("layout:", shiftToggle);
+  keyboard.setOptions({
+    layoutName: shiftToggle
+  });
 };
 
 const onMouseDown = (event) => {
@@ -125,8 +184,8 @@ const onMouseMove = (event) => {
 onMounted(() => {
   let commonKeyboardOptions = {
     onChange: input => onChange(input),
-    onKeyPress: button => onKeyPress(button),
-    onKeyReleased: button => onKeyReleased(button),
+    onKeyPress,
+    onKeyReleased,
     theme: "simple-keyboard hg-theme-default hg-layout-default",
     physicalKeyboardHighlight: true,
     syncInstanceInputs: true,
@@ -214,6 +273,17 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+
+  for (let key in keyStates) {
+    if (keyStates[key]) {
+      emit("onKeyReleased", key);
+      if (pressedKeys[key]) {
+        delete pressedKeys[key];
+      }
+      break;
+    }
+  }
+
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('mouseup', onMouseUp);
 
@@ -241,14 +311,13 @@ onUnmounted(() => {
 
 
 watch(() => props.input, (newValue, oldValue) => {
-  console.log("input:",newValue);
+  //console.log("input:", newValue);
   // keyboard.setInput(newValue);
 });
 
 </script>
 
 <style scoped>
-
 .keyboardContainer {
   display: flex;
   background-color: rgba(0, 0, 0, 0.637);
@@ -256,7 +325,7 @@ watch(() => props.input, (newValue, oldValue) => {
   width: 1024px;
   margin: 0 auto;
   border-radius: 5px;
-  position:absolute;
+  position: absolute;
 }
 
 .simple-keyboard.hg-theme-default {
@@ -374,5 +443,4 @@ watch(() => props.input, (newValue, oldValue) => {
 .hg-button.hg-functionBtn.hg-button-space {
   width: 350px;
 }
-
 </style>

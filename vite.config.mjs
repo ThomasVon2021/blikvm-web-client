@@ -10,6 +10,7 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import fs from 'fs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -65,5 +66,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 10005,
+    https: {
+      key: fs.readFileSync('./key.pem'),
+      cert: fs.readFileSync('./cert.pem'),
+    },
   },
 })
