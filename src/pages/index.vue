@@ -26,7 +26,7 @@
         <div class="blue-background text-center">
             <div class="content">
                 <h2>BliKVM Matrix</h2>
-                <h5>v1.4.x Alpha release</h5>
+                <h5>v1.5.x Alpha release</h5>
                 <h5>Powered by BliCube 2019-present</h5>
                 <h5>All rights reserved worldwide</h5>
             </div>

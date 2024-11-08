@@ -25,7 +25,7 @@
 <!-- Material Design Icons: https://pictogrammers.com/library/mdi/ -->
 <template>
     <v-app-bar v-if="showAppBar" height="40" color="#54a4ff" app dark flat>
-        <v-toolbar-title id="toolbar-title">BLIKVM {{ LatencyMS }} ms</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title">BLIKVM-v{{webversion}}-alpha {{ LatencyMS }} ms</v-toolbar-title>
         <v-spacer></v-spacer>
         <div id="toolbar-btns">
             <TabHome />
@@ -74,6 +74,7 @@ const store = useAppStore();
 const showAppBar = ref(true);
 const isFullScreen = ref(false);
 const { keyboardStatus , LatencyMS} = storeToRefs(store);
+const { webversion } = storeToRefs(store);
 
 const toggleFullScreen = () => {
     const doc = window.document;
