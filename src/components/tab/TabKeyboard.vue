@@ -96,7 +96,6 @@ function onKeyReleased(button, e) {
           pressedKeys[key].target.style.backgroundColor = "";
           delete pressedKeys[key];
         }
-        break;
       }
     }
   }
