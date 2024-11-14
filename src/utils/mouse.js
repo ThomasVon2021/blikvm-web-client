@@ -180,6 +180,7 @@ export class RateLimitedMouse {
 
     setTimeoutWindow(msBetweenEvents) {
         this._msBetweenEvents = msBetweenEvents;
+        this._restartTimeoutWindow();
     }
 
     static setMode(mode) {
@@ -230,6 +231,19 @@ export class RateLimitedMouse {
             }
             this._queuedEvent = null;
         }, this._msBetweenEvents);
+    }
+
+    _restartTimeoutWindow() {
+        if (this._eventTimer !== null) {
+            clearTimeout(this._eventTimer);
+            this._eventTimer = setTimeout(() => {
+                this._eventTimer = null;
+                if (this._queuedEvent) {
+                    this._emitEvent(this._queuedEvent);
+                }
+                this._queuedEvent = null;
+            }, this._msBetweenEvents);
+        }
     }
 
     _isInTimeoutWindow() {

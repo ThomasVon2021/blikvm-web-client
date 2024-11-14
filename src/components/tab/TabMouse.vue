@@ -47,12 +47,25 @@
                     </template>
                 </v-slider>
             </div>
+
+            <div class="d-flex ga-4 align-center flex-row">
+            <v-label class="text-subtitlte-1">{{ $t('tab.mouse.polling') }} ms</v-label>
+            <v-slider class="flex-grow-1 mx-3" v-model="sliderMousePolling" min="10" max="100" color="primary" step="10" hide-details @input="updateSliderMousePolling">
+              <template v-slot:append>
+                <v-text-field variant="plain" v-model="sliderMousePolling" class="polling-text-field">
+                </v-text-field>
+
+              </template>
+            </v-slider>
+            </div>
+
             <div class="d-flex align-center switch-container">
                 <v-label class="font-weight-medium mr-3">
                   {{ hidEnable ? $t('tab.mouse.soft_hid_enable') : $t('tab.mouse.soft_hid_disable') }}
                 </v-label>
                 <v-switch color="primary" v-model="hidEnable" hide-details @change="toggleHid"></v-switch>
             </div>
+          
             <div class="d-flex align-center switch-container">
                 <v-label class="font-weight-medium mr-3">
                   {{ mouseJiggler ? $t('tab.mouse.jiggler_enable') : $t('tab.mouse.jiggler_disable') }}
@@ -87,7 +100,10 @@ import { RateLimitedMouse } from '../../utils/mouse.js';
 const menu = ref(false);
 const slider_sensitivity = ref(1.0);
 const store = useAppStore();
-const { mouseStatus, hidEnable, absoluteMode, mouseJiggler } = storeToRefs(store);
+const { mouseStatus, hidEnable, absoluteMode, mouseJiggler, sliderMousePolling } = storeToRefs(store);
+const updateSliderMousePolling = (value) => {
+  store.updateSliderMousePolling(value);
+};
 const changeModeReboot = ref(false);
 
 async function reboot(){
@@ -201,5 +217,9 @@ function handleSensitivityChange(){
     100% {
         opacity: 1;
     }
+}
+
+.polling-text-field {
+  width: 30px; 
 }
 </style>

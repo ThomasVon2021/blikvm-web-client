@@ -62,7 +62,8 @@
             "jiggler_enable":"Enable mouse jiggler",
             "jiggler_disable":"Disable mouse jiggler",
             "change_mode":"change mouse mode success, you need reboot the kvm and your target pc now!",
-            "sensitivity":"Sensitivity"
+            "sensitivity":"Sensitivity",
+            "polling": "Mouse polling"
         },
         "msd":{
             "tip":"MSD",

@@ -62,7 +62,8 @@
         "jiggler_enable": "Abilita mouse jiggler",
         "jiggler_disable": "Disabilita mouse jiggler",
         "change_mode": "Modalità mouse modificata con successo, è necessario riavviare KVM e il PC di destinazione ora!",
-        "sensitivity": "Sensibilità"
+        "sensitivity": "Sensibilità",
+        "polling": "Mouse polling"
       },
       "msd": {
         "tip": "MSD",

@@ -98,7 +98,7 @@ import http from '@/utils/http.js';
 import ClipboardJS from 'clipboard';
 
 const store = useAppStore();
-const { videoMode, absoluteMode, ocrSelection } = storeToRefs(store);
+const { videoMode, absoluteMode, ocrSelection, sliderMousePolling } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
@@ -417,7 +417,7 @@ async function ocrRecognition() {
 
 let pingInterval = null;
 onMounted(() => {
-  const limitTime = 100;
+  const limitTime = sliderMousePolling.value;
   rateLimitedMouse = new RateLimitedMouse(limitTime, (mouseEvent) => {
     const obj = { m: mouseEvent };
     ws.send(JSON.stringify(obj));
@@ -442,6 +442,10 @@ onMounted(() => {
   pingInterval = setInterval(() => {
     sendPing(ws);
   }, 5000);  
+});
+
+watch(sliderMousePolling, (newValue) => {
+  rateLimitedMouse.setTimeoutWindow(newValue);
 });
 
 onUnmounted(() => {

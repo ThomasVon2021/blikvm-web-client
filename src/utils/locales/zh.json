@@ -62,7 +62,8 @@
             "jiggler_enable":"打开鼠标摇摆",
             "jiggler_disable":"关闭鼠标摇摆",
             "change_mode":"修改鼠标模式成功,你需要重启你的kvm和被控设备,确保模式生效",
-            "sensitivity":"灵敏度"
+            "sensitivity":"灵敏度",
+            "polling": "鼠标轮询"
         },
         "msd":{
             "tip":"U盘",

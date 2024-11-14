@@ -55,10 +55,14 @@ export const useAppStore = defineStore('app', {
     ledPwr: false,
     ledHDD: false,
     webversion: '',
+    sliderMousePolling: 10, 
   }),
   actions: {
     switchKeyboardStatus() {
       this.isKeyboardOpen = !this.isKeyboardOpen;
+    },
+    updateSliderMousePolling(value) {
+      this.sliderMousePolling = value;
     },
   },
 })
