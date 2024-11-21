@@ -62,7 +62,7 @@
             "jiggler_enable":"Dayakan jiggler tetikus",
             "jiggler_disable":"Lumpuhkan jiggler tetikus",
             "change_mode":"Berjaya menukar mod tetikus, anda perlu but semula kvm dan pc sasaran anda sekarang!",
-            "sensitivity":"Sensitiviti"
+            "sensitivity":"Sensitiviti",
             "polling": "Tinjauan tetikus"									  
         },
         "msd":{
