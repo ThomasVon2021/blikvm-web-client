@@ -3,6 +3,7 @@ import zh from './zh.json';
 import IT from './IT.json';
 import UA from './UA.json';
 import ms from './ms.json';
+import de from './de.json';
 
 const messages = {
     en: en,
@@ -10,6 +11,7 @@ const messages = {
     IT: IT,
     UA: UA,
     ms: ms,
+    de: de,
   };
   
   export default messages;
