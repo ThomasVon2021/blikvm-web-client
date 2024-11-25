@@ -5,7 +5,9 @@
         "password":"Password",
         "password_placeholder":"Enter your password",
         "login":"Login",
-        "login_fail":"Login failed. Please check your credentials"
+        "login_fail":"Login failed. Please check your credentials",
+        "two_fa_code": "2FA code",
+        "two_fa_code_placeholder": "if enabled"
     },
     "common":{
         "available":"Available",
@@ -113,7 +115,11 @@
             "version":"Version",
             "docs":"Docs",  
             "dsicord":"Discord",
-            "issue":"Issue"
+            "issue":"Issue",
+            "two_factor_auth": "Two-factor authentication",
+            "two_factor_code": "Verify the code from the app",
+            "enable_two_factor": "Enable 2FA",
+            "disable_two_factor": "Disable 2FA"
         },
         "video":{
             "tip":"Video",

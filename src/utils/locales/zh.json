@@ -5,7 +5,9 @@
         "password":"密码",
         "password_placeholder":"请输入你的密码",
         "login":"登陆",
-        "login_fail":"登陆失败,请检查账号密码信息"
+        "login_fail":"登陆失败,请检查账号密码信息",
+        "two_fa_code": "2FA验证码",
+        "two_fa_code_placeholder": "如果启用"
     },
     "common":{
         "available":"可用的",
@@ -113,7 +115,11 @@
             "version":"版本",
             "docs":"文档",  
             "dsicord":"Discord",
-            "issue":"问题"
+            "issue":"问题",
+            "two_factor_auth": "双因素认证",
+            "two_factor_code": "来自App的验证码",
+            "enable_two_factor": "使能2FA",
+            "disable_two_factor": "关闭2FA"
         },
         "video":{
             "tip":"视频",

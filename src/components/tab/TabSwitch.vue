@@ -65,7 +65,6 @@
           </v-btn>
         </v-col>
 
-
         <v-col cols="12" sm="6" md="4" class="text-center align-center">
           <div class="text-center">
             <v-dialog v-model="dialog" persistent @keydown.stop @keyup.stop>

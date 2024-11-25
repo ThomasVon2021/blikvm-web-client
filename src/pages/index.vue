@@ -51,6 +51,16 @@
                                     @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"
                                     @input="clearErrorMessage"></v-text-field>
     
+                                <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                                    {{ $t('login.two_fa_code') }}
+                                </div>
+
+                                <v-text-field v-model="twoFaCode" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :type="visible ? 'text' : 'password'" density="compact" :placeholder="$t('login.two_fa_code_placeholder')"
+                                    prepend-inner-icon="mdi-lock-outline" variant="outlined"
+                                    @click:append-inner="visible = !visible" @keyup.enter="handleLoginClick"
+                                    @input="clearErrorMessage"></v-text-field>
+
                                 <v-card v-if="errorMessage" class="mb-12" color="surface-variant" variant="tonal">
                                     <v-card-text class="text-medium-emphasis text-caption">
                                         {{ $t('label.warning') }}:<div class="warning">{{ errorMessage }}</div>
@@ -79,13 +89,13 @@ import { useAppStore } from '@/stores/stores';
 const router = useRouter();
 const openWindowLogin = ref(true);
 const visible = ref(false);
-const otp = shallowRef('');
 const validating = shallowRef(false);
 const errorMessage = ref('');
 const user = ref(null);
 const password = ref(null);
 const { proxy } = getCurrentInstance();
 const store = useAppStore();
+const twoFaCode = ref(null);
 
 const handleLoginClick = async () => {
     // TODO v-btn :loading
@@ -95,7 +105,8 @@ const handleLoginClick = async () => {
 
         const requestBody = {
             username: user.value,
-            password: password.value
+            password: password.value,
+            twoFaCode: twoFaCode.value
         };
         const response = await http.post('/login', requestBody);
         if (response.data.code === 0) {
@@ -113,7 +124,7 @@ const handleLoginClick = async () => {
             // Handle failed authentication
             console.log('Login failed. Please check your credentials:',response.data);
             // Optionally, set an error message for the user
-            errorMessage.value = proxy.$t('login.login_fail');
+            errorMessage.value = proxy.$t(response.data.msg);
         }
     } catch (error) {
         // Handle any errors that occurred during authentication
