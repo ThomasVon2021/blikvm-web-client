@@ -21,7 +21,7 @@
 ****************************************************************************
 -->
 <template>
-  <div class="keyboardContainer" ref="kb" @mousedown="onMouseDown">
+  <div class="keyboardContainer" id="kvm_kb" ref="kb" @mousedown="onMouseDown">
     <div class="simple-keyboard-main"></div>
 
     <div class="controlArrows">
@@ -68,6 +68,12 @@ const keyStates = {
   '{metaright}': false
 };
 
+const lockKeyStates = {
+  '{capslock}': false,
+  '{numlock}': false,
+  '{scrolllock}': false
+};
+
 const pressedKeys = {};
 
 const onChange = (input) => {
@@ -82,7 +88,7 @@ function onKeyReleased(button, e) {
     if (!keyStates[button]) {
       emit("onKeyReleased", button);
     }
-  } else {
+  }else {
     emit("onKeyReleased", button);
     for (let key in keyStates) {
       if (keyStates[key]) {
@@ -113,6 +119,8 @@ function onKeyPress(button, e) {
     emit("onKeyPress", button);
   } else if (button === "{capslock}") {
     handleShift();
+    lockKeyStates[button] = !lockKeyStates[button];
+    keystate = lockKeyStates[button];
     emit("onKeyPress", button);
   } else if (button === "{controlleft}" || button === "{controlright}" || button === "{altleft}" || button === "{altright}" || button === "{metaleft}" || button === "{metaright}") {
     if (!keyStates[button]) {
@@ -130,11 +138,9 @@ function onKeyPress(button, e) {
     }
   }
 
-  if (keystate) {
-    e.target.style.backgroundColor = "#b0b0b0";
-  } else {
-    e.target.style.backgroundColor = "";
-  }
+  const targetElement = document.getElementById('kvm_kb')?.querySelector(`.hg-button[data-skbtn="${button}"]`);
+  targetElement.style.backgroundColor = keystate ? "#b0b0b0" : "";
+
 }
 
 const handleShift = () => {

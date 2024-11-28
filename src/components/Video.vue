@@ -273,7 +273,7 @@ const handleKeyDown = (event) => {
     inputKey.value = code;
     pressedKeys.value.push(code);
   }
-  console.log("down: code:", code, "pressedKeys:", pressedKeys.value);
+  //console.log("down code:", code, "pressedKeys:", pressedKeys.value);
 };
 
 const handleKeyUp = (event) => {

@@ -30,8 +30,8 @@
         "connected":"Connected",
         "dis_connected":"Disconnected",
         "none": "None",
-        "enable":"Enable",
-        "disable":"Disable",
+        "enable":"Enabled",
+        "disable":"Disabled",
         "warning":"Warning"
     },
     "tab":{

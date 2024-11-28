@@ -71,6 +71,7 @@ const languageDD = shallowRef([
   { title: 'Ukrainian', subtext: 'UA', value: 'UA' },
   { title: 'Malaysians', subtext: 'ms', value: 'ms' },
   { title: 'German', subtext: 'de', value: 'de' },
+  { title: 'Russian', subtext: 'ru', value: 'ru' },
 ]);
 
 function changeLanguage(language) {

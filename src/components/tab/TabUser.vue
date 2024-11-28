@@ -218,7 +218,7 @@ const twoFAStateColor = computed(() => {
 
 const getTwoFaInfo = async () => {
   const requestBody = {
-    username: store.username,
+    username: nusername.value,
   };
   const response = await http.post('/2fa/info', requestBody);
   if (response.status === 200) {
