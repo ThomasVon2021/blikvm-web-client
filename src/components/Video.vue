@@ -112,9 +112,12 @@ const ocrText = ref('');
 const ocrTextFlag = ref(false);
 const isMouseInside = ref(false);
 const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
+const token = localStorage.getItem('token');
+
 
 const mjpegUrl = ref(`${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`);
-const ws = new WebSocket(`${wsProtocol}://${Config.host_ip}${Config.host_port}/wss`);
+
+const ws = new WebSocket(`${wsProtocol}://${Config.host_ip}${Config.host_port}/wss?token=${token}`);
 
 ws.addEventListener('open', () => {
   console.log('WebSocket connection established');
@@ -308,7 +311,7 @@ const initVideo = () => {
   });
 
   janus.value = new Janus({
-    server: `${wsProtocol}://${Config.host_ip}${Config.host_port}/janus`,
+    server: `${wsProtocol}://${Config.host_ip}${Config.host_port}/janus?token=${token}`,
     success: attachUStreamerPlugin,
     error: console.error,
   });
