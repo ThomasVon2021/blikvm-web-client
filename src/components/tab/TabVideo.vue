@@ -29,12 +29,6 @@
       </v-btn>
     </template>
     <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
-      <div class="d-flex align-center">
-        <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
-        <v-chip class="ma-2">
-          {{ resolutionWidth }} x {{ resolutionHeight }} {{ capturedFps }}Hz
-        </v-chip>
-      </div>
 
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
@@ -42,6 +36,19 @@
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
           <v-radio label="h264" color="primary" value="h264":disabled="hardwareType !== 'pi'"></v-radio>
         </v-radio-group>
+      </div>
+
+      <div v-if="hardwareType === 'pi'" class="d-flex align-center">
+        <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
+        <v-chip class="ma-2">
+          {{ resolutionWidth }} x {{ resolutionHeight }} {{ capturedFps }}Hz
+        </v-chip>
+      </div>
+
+      <div  v-if="hardwareType === 'mangoPi'" class="d-flex align-center">
+        <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
+        <v-autocomplete class="ml-3" v-model="switchResolutionsValue" :items="switchResolutions"
+        color="primary" variant="filled" hide-details @update:modelValue="changeResolution"></v-autocomplete>
       </div>
 
       <div v-if="videoMode === 'h264'" class="d-flex align-center">
@@ -134,6 +141,8 @@ const slider_h264_gop = ref(30);
 const slider_h264_audio = ref(0); 
 const resetDialog = ref(false);
 const resetResultText = ref('');
+const switchResolutionsValue = ref('640x480');
+const switchResolutions = ref(['1920x1080', '1600x1200', '1360x768', '1280x1024', '1280x960', '1280x720', '800x600', '720x480', '640x480']);
 
 function refreshPage(){
   resetDialog.value = false;
@@ -165,12 +174,31 @@ async function fetchVideoConfig() {
       slider_h264_mbps.value = data.kbps / 1000; // Convert to Mbps
       slider_h264_gop.value = data.gop;
       videoServerPort.value = data.port;
+      switchResolutionsValue.value = data.resolution;
+      switchResolutions.value = data.support_resolution;
     }else{
       console.log("get video config error");
     }
 }
   catch (error) {
     console.log(error);
+  }
+}
+
+async function changeResolution(){
+  try {
+
+    const response = await http.post(`/video/resolution?resolution=${switchResolutionsValue.value}`);
+    if(response.status === 200 && response.data.code === 0){
+      console.log('Resolution changed successfully:', response.data);
+    }else{
+      console.log('Resolution change failed:', response.data);
+    }
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  } catch (error) {
+    console.error('Error changing resolution:', error);
   }
 }
 

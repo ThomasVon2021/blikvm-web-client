@@ -5,7 +5,7 @@
         "password":"Passwort",
         "password_placeholder":"Gebe dein Passwort ein",
         "login":"Login",
-        "login_fail":"Login fehlgeschlagen. Überprüfe bitte deine Anmeldeinformationen."
+        "login_fail":"Login fehlgeschlagen. Überprüfe bitte deine Anmeldeinformationen.",
         "two_fa_code": "2FA Code",
         "two_fa_code_placeholder": "Falls aktiviert"
     },
@@ -115,7 +115,7 @@
             "version":"Version",
             "docs":"Dokumentation",  
             "dsicord":"Discord",
-            "issue":"Problem melden"
+            "issue":"Problem melden",
             "two_factor_auth": "Zwei Faktor-Authentifikation",
             "two_factor_code": "Bestätige den Code von der App",
             "enable_two_factor": "2FA aktivieren",
