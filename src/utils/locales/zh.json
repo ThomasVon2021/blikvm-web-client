@@ -133,7 +133,8 @@
             "reset_stream":"重启视频进程",
             "resolution":"分辨率",
             "volume":"音量",
-            "refresh":"点击关闭后,3秒后自动刷新页面后恢复正常操作"
+            "refresh":"点击关闭后,3秒后自动刷新页面后恢复正常操作",
+            "snapshot" : "截图"
         },
         "setting":{
             "tip":"设置",

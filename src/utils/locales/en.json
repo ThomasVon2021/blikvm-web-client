@@ -133,7 +133,8 @@
             "reset_stream":"Reset stream",
             "resolution":"Resolution",
             "volume":"Volume",
-            "refresh":"After clicking on the close button, the page will automatically refresh after 3 seconds and resume normal operation."
+            "refresh":"After clicking on the close button, the page will automatically refresh after 3 seconds and resume normal operation.",
+            "snapshot" : "Get Snapshot"
         },
         "setting":{
             "tip":"Setting",

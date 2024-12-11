@@ -29,7 +29,11 @@
       </v-btn>
     </template>
     <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
-
+      <div>
+        <v-btn key="primary" color="primary" @click="fetchSnapshot">
+          {{ $t('tab.video.snapshot') }}
+        </v-btn>
+      </div>
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
@@ -232,6 +236,32 @@ async function resetStream() {
     console.error('Error resetting stream:', error);
   }
 }
+
+const fetchSnapshot = async () => {
+  try {
+    const response = await http.get('/video/snapshot', { responseType: 'blob' });
+
+    if (response.status === 200) {
+      const imageUrl = URL.createObjectURL(response.data);
+      openImageInNewWindow(imageUrl);
+    } else {
+      console.error('Failed to fetch snapshot image');
+    }
+  } catch (error) {
+    console.error('Error fetching snapshot image:', error);
+  }
+};
+
+const openImageInNewWindow = (imageUrl) => {
+  const newWindow = window.open();
+  if (newWindow) {
+    newWindow.document.write(`<img src="${imageUrl}" alt="Snapshot" style="max-width: 100%; height: auto;" />`);
+    newWindow.document.close();
+  } else {
+    console.error('Failed to open new window');
+  }
+};
+
 
 onMounted(() => {
   const savedVideoMode = localStorage.getItem('videoMode');
