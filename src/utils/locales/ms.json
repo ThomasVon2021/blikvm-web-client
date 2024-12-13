@@ -1,11 +1,13 @@
- {
+{
     "login":{
         "username":"Nama Pengguna",
         "username_placeholder":"Masukkan nama pengguna anda",
         "password":"Kata Laluan",
         "password_placeholder":"Masukkan kata laluan anda",
         "login":"Log Masuk",
-        "login_fail":"Log masuk gagal. Sila semak kelayakan anda"
+        "login_fail":"Log masuk gagal. Sila semak kelayakan anda",
+        "two_fa_code": "2FA kod",
+        "two_fa_code_placeholder": "Jika didayakan"								  
     },
     "common":{
         "available":"Ada",
@@ -113,7 +115,11 @@
             "version":"Versi",
             "docs":"Dokumen",  
             "dsicord":"Discord",
-            "issue":"Isu"
+            "issue":"Isu",
+            "two_factor_auth": "Pengesahan Dua Faktor",
+            "two_factor_code": "Sahkan kod daripada apl",
+            "enable_two_factor": "Dayakan 2FA",
+            "disable_two_factor": "Lumpuhkan 2FA"														   											   
         },
         "video":{
             "tip":"Video",
@@ -127,7 +133,8 @@
             "reset_stream":"Tetapkan semula strim",
             "resolution":"Resolusi",
             "volume":"Kelantangan",
-            "refresh":"Selepas mengklik butang tutup, halaman akan dimuat semula secara automatik selepas 3 saat dan meneruskan operasi seperti biasa."
+            "refresh":"Selepas mengklik butang tutup, halaman akan dimuat semula secara automatik selepas 3 saat dan meneruskan operasi seperti biasa.",
+            "snapshot": "Tangkap gambar"									   
         },
         "setting":{
             "tip":"Tetapan",
