@@ -47,7 +47,9 @@ const term = ref(null);
 const fitAddon = ref(null);
 const ws = ref(null);
 const terminal = ref(null);
-const socketUrl = `${wsProtocol}://${Config.host_ip}:${Config.host_port}/ssh`;
+const token = localStorage.getItem('token');
+
+const socketUrl = `${wsProtocol}://${Config.host_ip}:${Config.host_port}/ssh?token=${token}`;
 const option = {
     lineHeight: 1.0,
     cursorBlink: true,
