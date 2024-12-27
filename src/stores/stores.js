@@ -56,6 +56,7 @@ export const useAppStore = defineStore('app', {
     ledHDD: false,
     webversion: '',
     sliderMousePolling: 10, 
+    fullScreen: false,
   }),
   actions: {
     switchKeyboardStatus() {

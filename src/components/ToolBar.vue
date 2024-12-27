@@ -86,9 +86,11 @@ const toggleFullScreen = () => {
     if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
         requestFullScreen.call(docEl);
         isFullScreen.value = true;
+        store.fullScreen = true;
     } else {
         cancelFullScreen.call(doc);
         isFullScreen.value = false;
+        store.fullScreen = false;
     }
 };
 

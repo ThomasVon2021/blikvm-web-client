@@ -21,11 +21,11 @@
 ****************************************************************************
 -->
 <template>
-  <div id="kvm" class="kvm-area" >
-    <img id="image" draggable="false"  @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
+  <div id="kvm" ref="kvm" class="kvm-area" >
+    <img :style="mediaStyle" id="image" draggable="false"  @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter" />
-    <video draggable="false"  @click="requestPointerLock" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
+    <video :style="mediaStyle"  draggable="false"  @click="requestPointerLock" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel"
       @contextmenu="handleContextMenu"       @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter"></video>
@@ -97,8 +97,9 @@ import { handleWSMessage, sendPing } from '@/utils/websocket.js';
 import http from '@/utils/http.js';
 import ClipboardJS from 'clipboard';
 
+const kvm = ref(null);
 const store = useAppStore();
-const { videoMode, absoluteMode, ocrSelection, sliderMousePolling } = storeToRefs(store);
+const { videoMode, absoluteMode, ocrSelection, sliderMousePolling, fullScreen } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
 const uStreamerPluginHandle = ref(null);
@@ -113,7 +114,7 @@ const ocrTextFlag = ref(false);
 const isMouseInside = ref(false);
 const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
 const token = localStorage.getItem('token');
-
+const mediaStyle = ref({});
 
 const mjpegUrl = ref(`${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`);
 
@@ -418,7 +419,35 @@ async function ocrRecognition() {
   }
 }
 
+const calculateRatios = () => {
+  if( fullScreen.value === false){
+    mediaStyle.value = {
+      'max-width': '100%',
+      'max-height': '100%',
+      objectFit: 'contain'
+    };
+    return;
+  }
+  const kvmElement = document.getElementById('kvm');
+  if (!kvmElement) return;
+  const rect = kvmElement.getBoundingClientRect();
+  const videoContainerRatio = rect.width / rect.height;
+  const videoRealRatio = store.resolutionWidth / store.resolutionHeight;
+  if (videoContainerRatio > videoRealRatio) {
+    mediaStyle.value = {
+      height: '100%',
+      objectFit: 'contain'
+    };
+  } else {
+    mediaStyle.value = {
+      width: '100%',
+      objectFit: 'contain'
+    };
+  }
+}
+
 let pingInterval = null;
+let resizeObserver;
 onMounted(() => {
   const limitTime = sliderMousePolling.value;
   rateLimitedMouse = new RateLimitedMouse(limitTime, (mouseEvent) => {
@@ -445,7 +474,17 @@ onMounted(() => {
   pingInterval = setInterval(() => {
     sendPing(ws);
   }, 5000);  
+
+  calculateRatios();
+  resizeObserver = new ResizeObserver(() => {
+    calculateRatios();
+  });
+
+  if (kvm.value) {
+    resizeObserver.observe(kvm.value);
+  }
 });
+
 
 watch(sliderMousePolling, (newValue) => {
   rateLimitedMouse.setTimeoutWindow(newValue);
@@ -472,24 +511,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   align-items: center;
   height: 100%;
-  widows: 100%;
-}
-
-img,
-video {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.kvm-area {
-  position: relative;
   width: 100%;
-  /* Adjust based on your layout */
-  height: 300px;
-  /* Adjust based on your layout */
-  border: 1px solid #ddd;
-  overflow: hidden;
 }
 
 .selection-overlay {
