@@ -22,9 +22,11 @@
 -->
 <template>
   <div id="kvm" ref="kvm" class="kvm-area" >
-    <img :style="mediaStyle" id="image" draggable="false"  @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
+    
+    <img :style="mediaStyle" id="image" draggable="false"   @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter" />
+    
     <video :style="mediaStyle"  draggable="false"  @click="requestPointerLock" v-else id="webrtc-output" autoplay playsinline muted @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel"
       @contextmenu="handleContextMenu"       @mouseleave="onMouseLeave"
@@ -102,6 +104,7 @@ const store = useAppStore();
 const { videoMode, absoluteMode, ocrSelection, sliderMousePolling, fullScreen } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
+const mjpegUrl = ref('');
 const uStreamerPluginHandle = ref(null);
 let ocrStartX = 0;
 let ocrStartY = 0;
@@ -115,8 +118,7 @@ const isMouseInside = ref(false);
 const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
 const token = localStorage.getItem('token');
 const mediaStyle = ref({});
-
-const mjpegUrl = ref(`${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`);
+let reloading = false;  
 
 const ws = new WebSocket(`${wsProtocol}://${Config.host_ip}${Config.host_port}/wss?token=${token}`);
 
@@ -298,9 +300,20 @@ watch(pressedKeys.value, (newVal) => {
 });
 
 watch(videoMode, (newVal) => {
-  console.log("videoMode:", newVal);
+  console.log("videoMode:", newVal, "reloading:", reloading);
   if (newVal === 'h264') {
     initVideo();
+    mjpegUrl.value = null;
+    if (reloading) {
+      window.location.reload();
+    }
+  }else{
+    reloading = true;
+    mjpegUrl.value = `${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`;
+    if(janus.value){
+      janus.value.destroy();
+      janus.value = null;
+    }
   }
 });
 
@@ -458,9 +471,14 @@ onMounted(() => {
   window.addEventListener('keyup', handleKeyUp);
   document.addEventListener('pointerlockchange', handlePointerLockChange);
   document.addEventListener('pointerlockerror', handlePointerLockError);
+
   if (videoMode.value === 'h264') {
     initVideo();
+    mjpegUrl.value = null;
+  }else{
+    mjpegUrl.value = `${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`;
   }
+
   document.addEventListener('mousemove', handleMouseMove);
 
   new ClipboardJS('.copy-btn', {
@@ -500,7 +518,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('pointerlockchange', handlePointerLockChange);
   document.removeEventListener('pointerlockerror', handlePointerLockError);
   document.removeEventListener('mousemove', handleMouseMove);
-
 });
 
 </script>

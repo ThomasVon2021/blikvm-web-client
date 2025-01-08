@@ -170,7 +170,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,nextTick } from 'vue';
 import { SettingsIcon, LogoutIcon, BrandDiscordIcon, BrandWikipediaIcon, BellQuestionIcon, TwoFactorAuthIcon } from 'vue-tabler-icons';
 import http from '@/utils/http.js';
 import { useAppStore } from '@/stores/stores';
@@ -306,10 +306,12 @@ const close = () => {
   changePassword.value = false;
 };
 
-const logout = () => {
+const logout = async () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
-  router.push('/');
+  await router.push('/');
+  await nextTick();
+  window.location.reload();
 };
 
 </script>
