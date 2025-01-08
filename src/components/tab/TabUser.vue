@@ -306,12 +306,10 @@ const close = () => {
   changePassword.value = false;
 };
 
-const logout = async () => {
+const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
-  await router.push('/');
-  await nextTick();
-  window.location.reload();
+  router.push('/');
 };
 
 </script>

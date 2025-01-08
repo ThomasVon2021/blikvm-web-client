@@ -23,7 +23,7 @@
 <template>
   <div id="kvm" ref="kvm" class="kvm-area" >
     
-    <img :style="mediaStyle" id="image" draggable="false"   @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
+    <img ref="imgElement" :style="mediaStyle" id="image" draggable="false"   @click="requestPointerLock" v-if="videoMode === 'mjpeg'" :src="mjpegUrl" @mousemove="handleMouseMove"
       @mousedown="handleMouseDown" @mouseup="handleMouseUp" @wheel="handleWheel" @contextmenu="handleContextMenu" @mouseleave="onMouseLeave"
       @mouseenter="onMouseEnter" />
     
@@ -104,7 +104,7 @@ const store = useAppStore();
 const { videoMode, absoluteMode, ocrSelection, sliderMousePolling, fullScreen } = storeToRefs(store);
 let inputKey = ref('');
 const janus = ref(null);
-const mjpegUrl = ref('');
+const mjpegUrl = ref(`${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`);
 const uStreamerPluginHandle = ref(null);
 let ocrStartX = 0;
 let ocrStartY = 0;
@@ -118,7 +118,7 @@ const isMouseInside = ref(false);
 const wsProtocol = Config.http_protocol === 'https:' ? 'wss' : 'ws';
 const token = localStorage.getItem('token');
 const mediaStyle = ref({});
-let reloading = false;  
+const imgElement = ref(null);
 
 const ws = new WebSocket(`${wsProtocol}://${Config.host_ip}${Config.host_port}/wss?token=${token}`);
 
@@ -300,15 +300,11 @@ watch(pressedKeys.value, (newVal) => {
 });
 
 watch(videoMode, (newVal) => {
-  console.log("videoMode:", newVal, "reloading:", reloading);
+  console.log("videoMode:", newVal);
   if (newVal === 'h264') {
+    clearImageSource();
     initVideo();
-    mjpegUrl.value = null;
-    if (reloading) {
-      window.location.reload();
-    }
   }else{
-    reloading = true;
     mjpegUrl.value = `${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`;
     if(janus.value){
       janus.value.destroy();
@@ -474,9 +470,6 @@ onMounted(() => {
 
   if (videoMode.value === 'h264') {
     initVideo();
-    mjpegUrl.value = null;
-  }else{
-    mjpegUrl.value = `${Config.http_protocol}//${Config.host_ip}${Config.host_port}/video/stream`;
   }
 
   document.addEventListener('mousemove', handleMouseMove);
@@ -503,6 +496,18 @@ onMounted(() => {
   }
 });
 
+function clearImageSource() {
+  if (imgElement.value) {
+    imgElement.value.src = '';  // 清空图片源
+  }
+}
+
+function clearVideoSoure() {
+  if(janus.value){
+      janus.value.destroy();
+      janus.value = null;
+    }
+}
 
 watch(sliderMousePolling, (newValue) => {
   rateLimitedMouse.setTimeoutWindow(newValue);
@@ -513,6 +518,8 @@ onUnmounted(() => {
 });
 
 onBeforeUnmount(() => {
+  clearImageSource();   // 清理图片流
+  clearVideoSoure();    // 清理视频流
   window.removeEventListener('keydown', handleKeyDown);
   window.removeEventListener('keyup', handleKeyUp);
   document.removeEventListener('pointerlockchange', handlePointerLockChange);
