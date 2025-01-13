@@ -4,6 +4,7 @@ import IT from './IT.json';
 import UA from './UA.json';
 import ms from './ms.json';
 import de from './de.json';
+import tr from './tr.json';
 import ru from './ru.json';
 
 const messages = {
@@ -13,6 +14,7 @@ const messages = {
     UA: UA,
     ms: ms,
     de: de,
+    tr: tr,
     ru: ru,
   };
   

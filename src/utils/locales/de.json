@@ -6,7 +6,7 @@
         "password_placeholder":"Gebe dein Passwort ein",
         "login":"Login",
         "login_fail":"Login fehlgeschlagen. Überprüfe bitte deine Anmeldeinformationen.",
-        "two_fa_code": "2FA Code",
+        "two_fa_code": "2FA-Code",
         "two_fa_code_placeholder": "Falls aktiviert"
     },
     "common":{
@@ -133,7 +133,8 @@
             "reset_stream":"Stream zurücksetzen",
             "resolution":"Auflösung",
             "volume":"Lautstärke",
-            "refresh":"Nach dem Klicken der Schließen-taste, wird diese Seite nach 3 Sekunden aktualisiert. Danach läuft das System normal weiter."
+            "refresh":"Nach dem Klicken der Schließen-taste, wird diese Seite nach 3 Sekunden aktualisiert. Danach läuft das System normal weiter.",
+            "snapshot" : "Screenshot"
         },
         "setting":{
             "tip":"Einstellungen",
@@ -147,7 +148,7 @@
             "new_version":"Du kannst zum Aktualisieren der Version das Terminal aufrufen"
         },
         "shortcuts":{
-            "tip":"Tastenkombis"
+            "tip":"Tastenkombinationen"
         },
         "terminal":"Terminal",
         "full_screen":"Vollbild",
