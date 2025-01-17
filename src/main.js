@@ -27,6 +27,8 @@
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import router from '@/router'
+import http from '@/utils/http.js';
 
 // Components
 import App from './App.vue'
@@ -34,8 +36,26 @@ import App from './App.vue'
 // Composables
 import { createApp } from 'vue'
 
-const app = createApp(App)
+import { useAppStore } from '@/stores/stores';
 
-registerPlugins(app)
+const app = createApp(App);
+registerPlugins(app);
+const store = useAppStore();
 
-app.mount('#app')
+async function initializeApp() {
+  try {
+    const response = await http.get('/auth/state');
+    if (response.data.version !== null) {
+      store.version = response.data.version;
+    }
+    if (response.data.data.auth === false) {
+      router.push('/main');
+    }
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+  }
+
+  app.mount('#app');
+}
+
+initializeApp();

@@ -19,6 +19,7 @@
 #                                                                            #
 *****************************************************************************/
 // Utilities
+import { version } from 'core-js';
 import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('app', {
@@ -57,6 +58,7 @@ export const useAppStore = defineStore('app', {
     webversion: '',
     sliderMousePolling: 10, 
     fullScreen: false,
+    version: 'xxx'
   }),
   actions: {
     switchKeyboardStatus() {
