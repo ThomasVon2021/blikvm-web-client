@@ -136,7 +136,7 @@ async function toggleHid(){
 async function toggleJiggler(){
   try {
     const actionValue = mouseJiggler.value ? 'true' : 'false';
-    const response = await http.post(`/mouse/jiggler?action=${actionValue}`);
+    const response = await http.get(`/mouse/jiggler?action=${actionValue}`);
     if( response.status === 200 && response.data.code === 0){
         console.log(`mouse jiggler ${actionValue} success`);
     }else{
