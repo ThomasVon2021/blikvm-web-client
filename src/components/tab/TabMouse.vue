@@ -40,8 +40,8 @@
 
             <div v-if="absoluteMode === false" class="d-flex align-center">
                 <v-label class="text-subtitlte-1"> {{ $t('tab.mouse.sensitivity') }} </v-label>
-                <v-slider class="flex-grow-1 mx-3" v-model="slider_sensitivity" color="primary" max="1" step="0.1"
-                    show-ticks="always" hide-details @input="handleSensitivityChange">
+                <v-slider class="flex-grow-1 mx-3" v-model="slider_sensitivity" color="primary" min="0.1" max="1" step="0.1"
+                    show-ticks="always" hide-details @update:modelValue="handleSensitivityChange">
                     <template v-slot:append>
                         <v-text-field variant="plain" v-model="slider_sensitivity"></v-text-field>
                     </template>
@@ -50,7 +50,7 @@
 
             <div class="d-flex ga-4 align-center flex-row">
             <v-label class="text-subtitlte-1">{{ $t('tab.mouse.polling') }} ms</v-label>
-            <v-slider class="flex-grow-1 mx-3" v-model="sliderMousePolling" min="10" max="100" color="primary" step="10" hide-details @input="updateSliderMousePolling">
+            <v-slider class="flex-grow-1 mx-3" v-model="sliderMousePolling" min="10" max="100" color="primary" step="10" hide-details @update:modelValue="updateSliderMousePolling">
               <template v-slot:append>
                 <v-text-field variant="plain" v-model="sliderMousePolling" class="polling-text-field">
                 </v-text-field>
