@@ -35,9 +35,16 @@ function handleWSMessage( event, store ){
       store.keyboardStatus = message.data.keyboardStatus;
     }
     if(message.data.hidStatus != null){
-      if( message.data.hidStatus.absolute != store.absoluteMode){
-        store.absoluteMode = message.data.hidStatus.absolute;
-        RateLimitedMouse.setMode(store.absoluteMode);
+      if(message.data.hidStatus.mouseMode === 'dual'){
+        store.mouseMode = 'dual';
+      }else if(message.data.hidStatus.mouseMode === 'absolute'){
+        store.mouseMode = 'absolute';
+        store.absoluteMode = true;
+        RateLimitedMouse.setMode(true);
+      }else if(message.data.hidStatus.mouseMode === 'relative'){  
+        store.mouseMode = 'relative';
+        store.absoluteMode = false;
+        RateLimitedMouse.setMode(false);
       }
       store.hidEnable = message.data.hidStatus.enable;
       store.mouseJiggler = message.data.hidStatus.mouseJiggler;

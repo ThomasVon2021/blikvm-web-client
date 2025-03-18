@@ -30,6 +30,7 @@ export const useAppStore = defineStore('app', {
     mouseStatus: false,
     hidEnable: true,
     absoluteMode: true,
+    mouseMode: "dual",
     mouseJiggler:true,
     keyboardStatus: false,
     deviceVersion: "BliKVM",

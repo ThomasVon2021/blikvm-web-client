@@ -30,9 +30,9 @@
             </v-btn>
         </template>
         <UiParentCard :title="$t('tab.mouse.title')" @mouseenter.stop @mousemove.stop>
-            <div class="d-flex align-center">
-                <v-label class="font-weight-medium align-center"> {{ $t('tab.mouse.mode') }} </v-label>
-                <v-radio-group v-model="absoluteMode" inline class="ml-3 align-center" @change="changeMode">
+            <div v-if="mouseMode === 'dual'" class="d-flex align-center">
+                <v-label  class="font-weight-medium align-center"> {{ $t('tab.mouse.mode') }} </v-label>
+                <v-radio-group  v-model="absoluteMode" inline class="ml-3 align-center" @change="changeMode">
                     <v-radio :label="$t('tab.mouse.absolute')" color="primary" :value='true'></v-radio>
                     <v-radio :label="$t('tab.mouse.relative')" color="primary" :value='false'></v-radio>
                 </v-radio-group>
@@ -100,7 +100,7 @@ import { RateLimitedMouse } from '../../utils/mouse.js';
 const menu = ref(false);
 const slider_sensitivity = ref(1.0);
 const store = useAppStore();
-const { mouseStatus, hidEnable, absoluteMode, mouseJiggler, sliderMousePolling } = storeToRefs(store);
+const { mouseStatus, hidEnable, absoluteMode, mouseMode, mouseJiggler, sliderMousePolling } = storeToRefs(store);
 const updateSliderMousePolling = (value) => {
   store.updateSliderMousePolling(value);
 };
@@ -149,14 +149,7 @@ async function toggleJiggler(){
 
 async function changeMode(){
   try {
-    const response = await http.post(`/hid/mode?absolute=${absoluteMode.value}`);
-    if( response.status === 200 && response.data.code === 0){
-        RateLimitedMouse.setMode(absoluteMode.value);
-        console.log(`change mode to Absolute:${absoluteMode.value} success`);
-        changeModeReboot.value = true;
-    }else{
-        console.log(`change mode to Absolute:${absoluteMode.value} error`);
-    }
+    RateLimitedMouse.setMode(absoluteMode.value);
   } catch (error) {
     console.error('Error during atx button trigger:', error);
   }
