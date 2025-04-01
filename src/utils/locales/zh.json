@@ -53,6 +53,10 @@
             "tip":"语言",
             "add":"添加新语言"
         },
+        "hid":{
+            "loop_block_enable":"停止HID环出",
+            "loop_block_disable":"开始HID环出"
+        },
         "mouse":{
             "tip":"鼠标",
             "title":"鼠标 设置",

@@ -53,6 +53,10 @@
             "tip":"Language",
             "add":"Add your language"
         },
+        "hid":{
+            "loop_block_enable":"Block HID Loop",
+            "loop_block_disable":"Unblock HID Loop"
+        },
         "mouse":{
             "tip":"Mouse",
             "title":"Mouse setting",

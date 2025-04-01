@@ -22,7 +22,7 @@
 ****************************************************************************
 -->
 <template>
-    <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+    <v-menu @update:modelValue="onMenuToggle" :close-on-content-click="false" location="bottom">
         <template v-slot:activator="{ props }">
             <v-btn icon :class="{'active-toolbar-btn': mouseStatus, 'inactive-toolbar-btn': !mouseStatus}" size="30" v-bind="props">
                 <v-icon class="toolbar-icon">mdi-mouse</v-icon>
@@ -73,17 +73,12 @@
                 <v-switch color="primary" v-model="mouseJiggler" hide-details @change="toggleJiggler"></v-switch>
             </div>
 
-            <v-dialog v-model="changeModeReboot">
-            <v-card>
-              <v-card-text>
-                {{ $t('tab.mouse.change_mode') }}
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="success" variant="text" @click="reboot">{{ $t('button.reboot') }}</v-btn>
-                <v-btn color="primary" variant="text" @click="changeModeReboot = false">{{ $t('button.later') }}</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+            <div v-if="hidloopEnabled === true" class="d-flex align-center switch-container">
+                <v-label class="font-weight-medium mr-3">
+                  {{ hidloopBlock ? $t('tab.hid.loop_block_enable') : $t('tab.hid.loop_block_disable') }}
+                </v-label>
+                <v-switch color="primary" v-model="hidloopBlock" hide-details @change="toggleHIDLoopBlock"></v-switch>
+            </div>
 
         </UiParentCard>
     </v-menu>
@@ -97,14 +92,14 @@ import { useAppStore } from '@/stores/stores';
 import { storeToRefs } from 'pinia';
 import { RateLimitedMouse } from '../../utils/mouse.js';
 
-const menu = ref(false);
 const slider_sensitivity = ref(1.0);
 const store = useAppStore();
 const { mouseStatus, hidEnable, absoluteMode, mouseMode, mouseJiggler, sliderMousePolling } = storeToRefs(store);
 const updateSliderMousePolling = (value) => {
   store.updateSliderMousePolling(value);
 };
-const changeModeReboot = ref(false);
+const hidloopEnabled = ref(false);
+const hidloopBlock = ref(false);
 
 async function reboot(){
     try {
@@ -157,6 +152,34 @@ async function changeMode(){
 
 function handleSensitivityChange(){
   RateLimitedMouse.setSensitivity(slider_sensitivity.value);
+}
+
+async function onMenuToggle(isOpen) {
+  if (isOpen) {
+    const response = await http.get('/hid/loop');
+    if (response.status === 200 && response.data.code === 0) {
+      hidloopEnabled.value = response.data.data.enabled;
+      hidloopBlock.value = response.data.data.blockFlag;
+    } else {
+      console.error('hid loop error');
+    }
+  }
+}
+
+async function toggleHIDLoopBlock(){
+  try {
+    const requestBody = {
+      blockFlag: hidloopBlock.value
+    };
+    const response = await http.post('/hid/loop/block', requestBody);
+    if( response.status === 200 && response.data.code === 0){
+      hidloopBlock.value = response.data.data.blockFlag;
+    }else{
+        console.error('hid loop block error');
+    }
+  } catch (error) {
+    console.error('Error during mouse jiggler trigger:', error);
+  }
 }
 
 </script>
