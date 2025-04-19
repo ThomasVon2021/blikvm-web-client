@@ -42,7 +42,12 @@
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <v-label class="font-weight-medium align-center">{{ $t('tab.text.paste_info') }}</v-label>
+          <span> {{ $t('tab.text.for') }} </span>
+        </v-col>
+        <v-col cols="auto">
+          <v-autocomplete class="ml-3 flex-grow-1" v-model="selectPasteLanguage" :items="pasteLanguages" color="primary"
+          variant="filled" hide-details></v-autocomplete>
+          <!-- <v-label class="font-weight-medium align-center">{{ $t('tab.text.paste_info') }}</v-label> -->
         </v-col>
       </v-row>
       <v-row>
@@ -81,6 +86,8 @@ const languageOptions = ref(['eng', 'chi_sim', 'chi_tra']);
 const store = useAppStore();
 const { startOcr } = storeToRefs(store);
 const pasteValue = ref("");
+const pasteLanguages = ref();
+const selectPasteLanguage = ref('en-us');
 
 
 function startSelection() {
@@ -90,12 +97,11 @@ function startSelection() {
 
 async function pasteToTarget() {
   try {
-
-    const response = await http.post('/hid/paste', pasteValue.value, {
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
+    const requestBody = {
+      text: pasteValue.value,
+      lang: selectPasteLanguage.value
+    };
+    const response = await http.post('/hid/paste', requestBody);
     if (response.status === 200) {
       console.log('paste to target ok');
     }
@@ -104,6 +110,27 @@ async function pasteToTarget() {
   }
 }
 
+async function fetchPasteLanguage() {
+  try {
+    const response = await http.get('/hid/paste');
+    if (response.status === 200 && response.data.code === 0) {
+      pasteLanguages.value = response.data.data;
+    } else {
+      console.error('Failed to fetch language');
+    }
+  } catch (error) {
+    console.error('Error fetching language:', error);
+  }
+}
+
+onMounted(async () => {
+  if(pasteLanguages.value === undefined){
+    await fetchPasteLanguage();  
+  }
+});
+
 </script>
+
+
 
 <style scoped></style>

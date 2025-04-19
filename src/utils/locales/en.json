@@ -93,7 +93,8 @@
             "tip":"Switch",
             "choose_a_model":"Choose a model",
             "choose_a_channel":"Choose a channel",
-            "config": "Switch config"
+            "config": "Switch config",
+            "no_model_selected": "No model selected"
         },
         "text":{
             "tip":"Text",
@@ -138,7 +139,9 @@
             "resolution":"Resolution",
             "volume":"Volume",
             "refresh":"After clicking on the close button, the page will automatically refresh after 3 seconds and resume normal operation.",
-            "snapshot" : "Get Snapshot"
+            "snapshot" : "Screenshot",
+            "start_record" : "Start recording",
+            "stop_record" : "Stop recording"
         },
         "setting":{
             "tip":"Setting",

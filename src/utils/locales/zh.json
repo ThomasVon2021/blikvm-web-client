@@ -93,7 +93,8 @@
             "tip":"切换器",
             "choose_a_model":"选择型号",
             "choose_a_channel":"选择通道",
-            "config": "切换器配置"
+            "config": "切换器配置",
+            "no_model_selected": "未选择型号"
         },
         "text":{
             "tip":"文本",
@@ -138,7 +139,9 @@
             "resolution":"分辨率",
             "volume":"音量",
             "refresh":"点击关闭后,3秒后自动刷新页面后恢复正常操作",
-            "snapshot" : "截图"
+            "snapshot" : "截图",
+            "start_record" : "开始录制",
+            "stop_record" : "结束录制"
         },
         "setting":{
             "tip":"设置",

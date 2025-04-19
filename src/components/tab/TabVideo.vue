@@ -29,16 +29,25 @@
       </v-btn>
     </template>
     <UiParentCard :title="$t('tab.video.title')" @mouseenter.stop @mousemove.stop>
-      <div>
+      <div class="d-flex align-center">
         <v-btn key="primary" color="primary" @click="fetchSnapshot">
           {{ $t('tab.video.snapshot') }}
         </v-btn>
+
+        <v-btn v-if="videoMode === 'h264'" key="primary" :color="recordFlag ? 'green' : 'primary'" class="ml-3"
+          @click="recordFlag ? stopRecording() : startRecording()">
+          {{ recordFlag ? $t('tab.video.stop_record') : $t('tab.video.start_record') }}
+        </v-btn>
+
       </div>
+
+
+
       <div class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
-          <v-radio label="h264" color="primary" value="h264":disabled="hardwareType !== 'pi'"></v-radio>
+          <v-radio label="h264" color="primary" value="h264" :disabled="hardwareType !== 'pi'"></v-radio>
         </v-radio-group>
       </div>
 
@@ -49,16 +58,16 @@
         </v-chip>
       </div>
 
-      <div  v-if="hardwareType === 'mangoPi'" class="d-flex align-center">
+      <div v-if="hardwareType === 'mangoPi'" class="d-flex align-center">
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.resolution') }}: </v-label>
-        <v-autocomplete class="ml-3" v-model="switchResolutionsValue" :items="switchResolutions"
-        color="primary" variant="filled" hide-details @update:modelValue="changeResolution"></v-autocomplete>
+        <v-autocomplete class="ml-3" v-model="switchResolutionsValue" :items="switchResolutions" color="primary"
+          variant="filled" hide-details @update:modelValue="changeResolution"></v-autocomplete>
       </div>
 
       <div v-if="videoMode === 'h264'" class="d-flex align-center">
         <v-label class="text-subtitlte-1">{{ $t('tab.video.volume') }}</v-label>
-        <v-slider class="flex-grow-1 mx-3" v-model="slider_h264_audio" color="secondary" min="0" max="1" step="0.1" show-ticks="always"
-          hide-details @update:modelValue="adjustVolume">
+        <v-slider class="flex-grow-1 mx-3" v-model="slider_h264_audio" color="secondary" min="0" max="1" step="0.1"
+          show-ticks="always" hide-details @update:modelValue="adjustVolume">
           <template v-slot:append>
             <v-text-field variant="plain" v-model="slider_h264_audio"></v-text-field>
           </template>
@@ -76,8 +85,8 @@
 
       <div v-if="videoMode === 'mjpeg'" class="d-flex align-center">
         <v-label class="text-subtitlte-1">{{ $t('tab.video.quality') }}</v-label>
-        <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" min="10" max="100" color="primary" step="10" show-ticks="always"
-          hide-details>
+        <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" min="10" max="100" color="primary" step="10"
+          show-ticks="always" hide-details>
           <template v-slot:append>
             <v-text-field variant="plain" v-model="slider_mjpeg_quality"></v-text-field>
           </template>
@@ -105,7 +114,7 @@
       </div>
 
       <div class="d-flex ga-4 align-center flex-column flex-wrap flex-xl-nowrap flex-sm-row fill-height">
-        
+
         <v-label class="text-subtitlte-1">{{ $t('tab.video.reset_take_effect') }}</v-label>
         <v-btn key="primary" color="primary" @click="resetStream">
           {{ $t('tab.video.reset_stream') }}
@@ -114,7 +123,7 @@
         <v-dialog v-model="resetDialog">
           <v-card>
             <v-card-text>
-              {{ resetResultText }}  {{ $t('tab.video.refresh') }}
+              {{ resetResultText }} {{ $t('tab.video.refresh') }}
             </v-card-text>
             <v-card-actions>
               <v-btn color="primary" block @click="refreshPage">{{ $t('button.close') }}</v-btn>
@@ -137,30 +146,37 @@ import http from '@/utils/http.js';
 
 const store = useAppStore();
 const menu = ref(false);
-const { videoMode, videoServerPort,resolutionWidth,resolutionHeight,capturedFps,hardwareType } = storeToRefs(store);
+const { videoMode, videoServerPort, resolutionWidth, resolutionHeight, capturedFps, hardwareType } = storeToRefs(store);
 const slider_mjpeg_quality = ref(80);
 const slider_fps = ref(25);
 const slider_h264_mbps = ref(5);
 const slider_h264_gop = ref(30);
-const slider_h264_audio = ref(0); 
+const slider_h264_audio = ref(0);
 const resetDialog = ref(false);
 const resetResultText = ref('');
 const switchResolutionsValue = ref('640x480');
 const switchResolutions = ref(['1920x1080', '1600x1200', '1360x768', '1280x1024', '1280x960', '1280x720', '800x600', '720x480', '640x480']);
+const videoId = document.getElementById("webrtc-output");
 
-function refreshPage(){
+let mediaRecorder;
+let recordedChunks = [];
+let fileHandle;
+let writableStream;
+let recordFlag = ref(false);
+
+function refreshPage() {
   resetDialog.value = false;
   setTimeout(() => {
     window.location.reload();
   }, 3000); // 3 seconds delay
 }
 
-function adjustVolume (){
+function adjustVolume() {
   const videoElement = document.getElementById('webrtc-output');
   console.log('Volume:', slider_h264_audio.value);
   if (videoElement) {
     videoElement.muted = false;
-    videoElement.volume = slider_h264_audio.value; 
+    videoElement.volume = slider_h264_audio.value;
   }
 };
 
@@ -171,7 +187,7 @@ watch(videoMode, (newMode) => {
 async function fetchVideoConfig() {
   try {
     const response = await http.post('/video/config?action=get')
-    if(response.status === 200 && response.data.code === 0){
+    if (response.status === 200 && response.data.code === 0) {
       const data = response.data.data;
       slider_fps.value = data.fps;
       slider_mjpeg_quality.value = data.quality;
@@ -180,22 +196,22 @@ async function fetchVideoConfig() {
       videoServerPort.value = data.port;
       switchResolutionsValue.value = data.resolution;
       switchResolutions.value = data.support_resolution;
-    }else{
+    } else {
       console.log("get video config error");
     }
-}
+  }
   catch (error) {
     console.log(error);
   }
 }
 
-async function changeResolution(){
+async function changeResolution() {
   try {
 
     const response = await http.post(`/video/resolution?resolution=${switchResolutionsValue.value}`);
-    if(response.status === 200 && response.data.code === 0){
+    if (response.status === 200 && response.data.code === 0) {
       console.log('Resolution changed successfully:', response.data);
-    }else{
+    } else {
       console.log('Resolution change failed:', response.data);
     }
     setTimeout(() => {
@@ -219,16 +235,16 @@ async function resetStream() {
     });
     console.log('Stream reset successful:', response.data);
     const stopResponse = await http.post('/video?action=stop');
-    if(stopResponse.data.data.state === "STOPPED"){
+    if (stopResponse.data.data.state === "STOPPED") {
       const startResponse = await http.post('/video?action=start');
-      if(startResponse.data.data.state === "RUNNING"){
+      if (startResponse.data.data.state === "RUNNING") {
         resetResultText.value = "Stream has been successfully resetted.";
         resetDialog.value = true;
-      }else{
+      } else {
         resetResultText.value = startResponse.data.msg;
         resetDialog.value = true;
       }
-    }else{
+    } else {
       resetResultText.value = stopResponse.data.msg;
       resetDialog.value = true;
     }
@@ -239,7 +255,7 @@ async function resetStream() {
 
 const fetchSnapshot = async () => {
   try {
-    const response = await http.get('/video/snapshot', { responseType: 'blob' });
+    const response = await http.get('/video/screenshot', { responseType: 'blob' });
 
     if (response.status === 200) {
       const imageUrl = URL.createObjectURL(response.data);
@@ -262,6 +278,71 @@ const openImageInNewWindow = (imageUrl) => {
   }
 };
 
+async function startRecording() {
+  try {
+    console.log("Start recording...");
+    recordedChunks = [];
+    const stream = videoId.captureStream();
+    mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
+
+    mediaRecorder.onstart = function () {
+      recordFlag.value = true;
+      console.log("MediaRecorder started");
+    };
+
+    mediaRecorder.ondataavailable = async function (event) {
+      console.log("Data available event triggered");
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+        console.log("Writing data chunk, size:", event.data.size);
+        await writableStream.write(event.data);
+        console.log("Data chunk written.");
+      } else {
+        console.log("Data chunk empty");
+      }
+    };
+
+    mediaRecorder.onstop = async function () {
+      console.log("Stopping media recorder...");
+      await writableStream.close();
+      console.log("Writable stream closed.");
+      recordFlag.value = false;
+    };
+
+    mediaRecorder.onerror = function (event) {
+      console.error("MediaRecorder error:", event.error);
+    };
+
+    // Request file access
+    console.log("Requesting file handle...");
+    fileHandle = await window.showSaveFilePicker({
+      suggestedName: 'recording.webm',
+      types: [
+        {
+          description: 'WebM Video',
+          accept: { 'video/webm': ['.webm'] }
+        },
+      ],
+    });
+
+    console.log("Creating writable stream...");
+    writableStream = await fileHandle.createWritable();
+    mediaRecorder.start(1000); // 每秒生成一个数据块
+    console.log("Media recorder started.");
+  } catch (error) {
+    console.error("Error starting recording:", error);
+  }
+}
+
+async function stopRecording() {
+  try {
+    console.log("Stop recording...");
+    mediaRecorder.stop();
+    console.log("Media recorder stopped.");
+  } catch (error) {
+    console.error("Error stopping recording:", error);
+  }
+}
 
 onMounted(() => {
   const savedVideoMode = localStorage.getItem('videoMode');
