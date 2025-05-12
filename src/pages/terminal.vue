@@ -154,6 +154,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     removeResizeListener();
+    if (ws.value) {
+      ws.value.close();
+    }
 })
 </script>
 

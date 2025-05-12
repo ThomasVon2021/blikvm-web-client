@@ -42,8 +42,9 @@
 
   const router = useRouter();
 
-  const openSSHClient = () => {
+  const openSSHClient = () => {  
     router.push('/terminal');
+    // router.push('/serial');
 };
 
 </script>

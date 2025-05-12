@@ -316,7 +316,7 @@ watch(videoMode, (newVal) => {
 const initVideo = () => {
   const desp = { adapter };
   Janus.init({
-    debug: true,
+    debug: false,
     dependencies: Janus.useDefaultDependencies(desp),
   });
 
@@ -525,6 +525,11 @@ onBeforeUnmount(() => {
   document.removeEventListener('pointerlockchange', handlePointerLockChange);
   document.removeEventListener('pointerlockerror', handlePointerLockError);
   document.removeEventListener('mousemove', handleMouseMove);
+  if(ws){
+    console.log('video WebSocket connection closed');
+    ws.close();
+  }
+  
 });
 
 </script>
