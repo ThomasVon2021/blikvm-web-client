@@ -47,7 +47,7 @@
         <v-label class="font-weight-medium align-center">{{ $t('tab.video.mode') }}</v-label>
         <v-radio-group v-model="videoMode" inline class="ml-3 align-center">
           <v-radio label="mjpeg" color="primary" value="mjpeg"></v-radio>
-          <v-radio label="h264" color="primary" value="h264" :disabled="hardwareType !== 'pi'"></v-radio>
+          <v-radio label="h264" color="primary" value="h264"></v-radio>
         </v-radio-group>
       </div>
 
