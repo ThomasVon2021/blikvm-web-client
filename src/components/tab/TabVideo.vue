@@ -83,7 +83,7 @@
         </v-slider>
       </div>
 
-      <div v-if="videoMode === 'mjpeg'" class="d-flex align-center">
+      <div v-if="videoMode === 'mjpeg' && hardwareType === 'pi'" class="d-flex align-center">
         <v-label class="text-subtitlte-1">{{ $t('tab.video.quality') }}</v-label>
         <v-slider class="flex-grow-1 mx-3" v-model="slider_mjpeg_quality" min="10" max="100" color="primary" step="10"
           show-ticks="always" hide-details>
@@ -156,7 +156,6 @@ const resetDialog = ref(false);
 const resetResultText = ref('');
 const switchResolutionsValue = ref('640x480');
 const switchResolutions = ref(['1920x1080', '1600x1200', '1360x768', '1280x1024', '1280x960', '1280x720', '800x600', '720x480', '640x480']);
-const videoId = document.getElementById("webrtc-output");
 
 let mediaRecorder;
 let recordedChunks = [];
@@ -280,6 +279,7 @@ const openImageInNewWindow = (imageUrl) => {
 
 async function startRecording() {
   try {
+    const videoId = document.getElementById("webrtc-output");
     console.log("Start recording...");
     recordedChunks = [];
     const stream = videoId.captureStream();
