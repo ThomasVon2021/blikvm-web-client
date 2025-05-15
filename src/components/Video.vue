@@ -285,13 +285,22 @@ const handleKeyDown = (event) => {
 const handleKeyUp = (event) => {
   event.preventDefault();
   const code = event.code;
+
   const index = pressedKeys.value.indexOf(code);
   if (index > -1) {
     pressedKeys.value.splice(index, 1);
   } else {
     console.error("Key not found in pressedKeys:", code);
   }
+
+  if (code === 'MetaLeft' || code === 'MetaRight') {
+    while (pressedKeys.value.length > 0) {
+    pressedKeys.value.pop();
+    }
+    return;
+  }
   // console.log("up: code:", code, "pressedKeys:", pressedKeys.value);
+
 };
 
 watch(pressedKeys.value, (newVal) => {
