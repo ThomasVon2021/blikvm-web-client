@@ -388,8 +388,8 @@ const removeItemConfirm = async (item) => {
 
   const removeImage = async (item) => {
     try {
-      const url = `/msd/delete?image=${item}`;
-      console.log(url)
+      const encodedPath = encodeURIComponent(item);
+      const url = `/msd/delete?image=${encodedPath}`;
 
       const response = await http.post(url);
 
