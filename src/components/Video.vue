@@ -279,7 +279,7 @@ const handleKeyDown = (event) => {
     inputKey.value = code;
     pressedKeys.value.push(code);
   }
-  //console.log("down code:", code, "pressedKeys:", pressedKeys.value);
+  // console.log("down code:", code, "pressedKeys:", pressedKeys.value);
 };
 
 const handleKeyUp = (event) => {
@@ -291,16 +291,27 @@ const handleKeyUp = (event) => {
     pressedKeys.value.splice(index, 1);
   } else {
     console.error("Key not found in pressedKeys:", code);
+    return;
   }
 
   if (code === 'MetaLeft' || code === 'MetaRight') {
     while (pressedKeys.value.length > 0) {
     pressedKeys.value.pop();
     }
+    // console.log("up: code:", code, "pressedKeys:", pressedKeys.value);
     return;
   }
   // console.log("up: code:", code, "pressedKeys:", pressedKeys.value);
 
+};
+
+const releaseAllKey = () => {
+  console.log("release all key len:", pressedKeys.value.length);
+  while (pressedKeys.value.length > 0) {
+    console.log( "pressedKeys up:", pressedKeys.value);
+    pressedKeys.value.pop();
+
+  }
 };
 
 watch(pressedKeys.value, (newVal) => {
@@ -476,6 +487,8 @@ onMounted(() => {
   window.addEventListener('keyup', handleKeyUp);
   document.addEventListener('pointerlockchange', handlePointerLockChange);
   document.addEventListener('pointerlockerror', handlePointerLockError);
+  window.addEventListener("pagehide", releaseAllKey);
+	window.addEventListener("blur", releaseAllKey);
 
   if (videoMode.value === 'h264') {
     initVideo();
@@ -538,7 +551,9 @@ onBeforeUnmount(() => {
     console.log('video WebSocket connection closed');
     ws.close();
   }
-  
+
+  window.removeEventListener("pagehide", releaseAllKey);
+  window.removeEventListener("blur", releaseAllKey);
 });
 
 </script>
